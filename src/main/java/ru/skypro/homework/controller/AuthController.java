@@ -1,5 +1,6 @@
 package ru.skypro.homework.controller;
 
+import io.swagger.v3.oas.annotations.Operation;
 import lombok.RequiredArgsConstructor;
 import lombok.extern.slf4j.Slf4j;
 import org.springframework.http.HttpStatus;
@@ -23,6 +24,10 @@ public class AuthController {
 
     private final AuthService authService;
 
+    @Operation(
+            tags = "Авторизация (AuthController)",
+            summary = "Вход (login)"
+    )
     @PostMapping("/login")
     public ResponseEntity<?> login(@RequestBody LoginReq req) {
         if (authService.login(req.getUsername(), req.getPassword())) {
@@ -32,6 +37,10 @@ public class AuthController {
         }
     }
 
+    @Operation(
+            tags = "Авторизация (AuthController)",
+            summary = "Регистрация (register)"
+    )
     @PostMapping("/register")
     public ResponseEntity<?> register(@RequestBody RegisterReq req) {
         Role role = req.getRole() == null ? USER : req.getRole();
