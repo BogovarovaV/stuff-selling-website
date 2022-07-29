@@ -1,4 +1,4 @@
-package ru.skypro.homework.model;
+package ru.skypro.homework.dto;
 
 import lombok.Data;
 
@@ -7,7 +7,6 @@ public class User {
     private int id;
     private String firstName;
     private String lastName;
-    private String password;
     private String email;
     private String phone;
 }
