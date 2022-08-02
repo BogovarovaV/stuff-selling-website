@@ -13,7 +13,6 @@ import java.time.OffsetDateTime;
 @AllArgsConstructor
 public class Comment {
 
-
     @Id
     @GeneratedValue(strategy = GenerationType.IDENTITY)
     private Integer id;
