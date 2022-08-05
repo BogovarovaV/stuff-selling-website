@@ -1,17 +1,26 @@
 package ru.skypro.homework.service;
 
 import ru.skypro.homework.dto.AdsComment;
+import ru.skypro.homework.dto.ResponseWrapperAdsComment;
 import ru.skypro.homework.model.Comment;
 
 import java.util.List;
 
 public interface CommentService {
 
-    Comment createComment(AdsComment commentDTO);
+    AdsComment createComment(Integer adsId, AdsComment adsCommentDto);
 
-    AdsComment findCommentByPk(Integer pk);
+    AdsComment getAdsComment(Integer adsId, Integer id);
 
-    List<AdsComment> findAllComments();
+    ResponseWrapperAdsComment getAdsAllComments(Integer adsId);
 
-    void deleteCommentByPk(Integer pk);
+    void deleteAdsComment(Integer adsId, Integer id);
+
+    AdsComment updateAdsComment(Integer adsPk, Integer pk, AdsComment adsCommentDto);
+
+    AdsComment convertCommentEntityToAdsCommentDto(Comment comment);
+
+    Comment convertAdsCommentDtoToCommentEntity(AdsComment adsCommentDto);
+
+    ResponseWrapperAdsComment convertCommentsListEntityToResponseWrapperAdsCommentDto(List<Comment> comments);
 }

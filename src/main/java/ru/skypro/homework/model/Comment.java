@@ -26,5 +26,5 @@ public class Comment {
 //    private Integer author;
 
     @ManyToOne
-    private Ads ads;
+    private Advert ads;
 }

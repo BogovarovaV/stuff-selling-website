@@ -4,11 +4,21 @@ import io.swagger.v3.oas.annotations.Operation;
 import org.springframework.http.ResponseEntity;
 import org.springframework.web.bind.annotation.*;
 import ru.skypro.homework.dto.*;
+import ru.skypro.homework.service.AdvertService;
+import ru.skypro.homework.service.CommentService;
 
 @CrossOrigin(value = "http://localhost:3000")
 @RestController
 @RequestMapping("/ads")
 public class AdsController {
+
+    private final AdvertService advertService;
+    private final CommentService commentService;
+
+    public AdsController(AdvertService advertService, CommentService commentService) {
+        this.advertService = advertService;
+        this.commentService = commentService;
+    }
 
     @Operation(
             tags = "Объявления (AdsController)",
@@ -16,7 +26,7 @@ public class AdsController {
     )
     @GetMapping
     public ResponseEntity<ResponseWrapperAds> getAllAds() {
-        return ResponseEntity.ok(new ResponseWrapperAds());
+        return ResponseEntity.ok(advertService.getAllAds());
     }
 
     @Operation(
@@ -24,7 +34,8 @@ public class AdsController {
             summary = "Добавление объявления (addAds)"
     )
     @PostMapping
-    public ResponseEntity<AdsComment> addAds(@RequestBody AdsComment ads) {
+    public ResponseEntity<CreateAds> addAds(@RequestBody CreateAds ads) {
+        advertService.createAds(ads);
         return ResponseEntity.ok(ads);
     }
 
@@ -43,6 +54,7 @@ public class AdsController {
     )
     @DeleteMapping("{id}")
     public ResponseEntity<Void> removeAds(@PathVariable int id) {
+        advertService.removeAds(id);
         return ResponseEntity.ok().build();
     }
 
@@ -52,7 +64,11 @@ public class AdsController {
     )
     @GetMapping("{id}")
     public ResponseEntity<FullAds> getAds(@PathVariable int id) {
-        return ResponseEntity.ok(new FullAds());
+        FullAds fullAds = advertService.getAds(id);
+        if (fullAds == null) {
+            return ResponseEntity.notFound().build();
+        }
+        return ResponseEntity.ok(fullAds);
     }
 
     @Operation(
@@ -61,6 +77,10 @@ public class AdsController {
     )
     @PatchMapping("{id}")
     public ResponseEntity<Ads> updateAds(@PathVariable int id, @RequestBody Ads ads) {
+        Ads adsDto = advertService.updateAdvert(id, ads);
+        if (adsDto == null) {
+            ResponseEntity.notFound().build();
+        }
         return ResponseEntity.ok(ads);
     }
 
@@ -70,7 +90,7 @@ public class AdsController {
     )
     @GetMapping("{ad_pk}/comment")
     public ResponseEntity<ResponseWrapperAdsComment> getAdsComments(@PathVariable int ad_pk) {
-        return ResponseEntity.ok(new ResponseWrapperAdsComment());
+        return ResponseEntity.ok(commentService.getAdsAllComments(ad_pk));
     }
 
     @Operation(
@@ -78,8 +98,9 @@ public class AdsController {
             summary = "Добавление отзыва к объявлению (addAdsComment)"
     )
     @PostMapping("{ad_pk}/comment")
-    public ResponseEntity<AdsComment> addAdsComment(@PathVariable int ad_pk, @RequestBody AdsComment ads) {
-        return ResponseEntity.ok(ads);
+    public ResponseEntity<AdsComment> addAdsComment(@PathVariable int ad_pk, @RequestBody AdsComment adsComment) {
+        commentService.createComment(ad_pk, adsComment);
+        return ResponseEntity.ok(adsComment);
     }
 
     @Operation(
@@ -89,6 +110,7 @@ public class AdsController {
     @DeleteMapping("{ad_pk}/comment/{id}")
     public ResponseEntity<Void> deleteAdsComment(@PathVariable int ad_pk,
                                                     @PathVariable int id) {
+        commentService.deleteAdsComment(ad_pk, id);
         return ResponseEntity.ok().build();
     }
 
@@ -99,7 +121,11 @@ public class AdsController {
     @GetMapping("{ad_pk}/comment/{id}")
     public ResponseEntity<AdsComment> getAdsComment(@PathVariable int ad_pk,
                                                  @PathVariable int id) {
-        return ResponseEntity.ok(new AdsComment());
+        AdsComment commentDTO = commentService.getAdsComment(ad_pk, id);
+        if (commentDTO == null) {
+            return ResponseEntity.notFound().build();
+        }
+        return ResponseEntity.ok(commentDTO);
     }
 
     @Operation(
@@ -110,6 +136,10 @@ public class AdsController {
     public ResponseEntity<AdsComment> updateAdsComment(@PathVariable int ad_pk,
                                                     @PathVariable int id,
                                                     @RequestBody AdsComment comment) {
-        return ResponseEntity.ok(comment);
+        AdsComment adsCommentDto = commentService.updateAdsComment(ad_pk, id, comment);
+        if (adsCommentDto == null) {
+            return ResponseEntity.notFound().build();
+        }
+        return ResponseEntity.ok(adsCommentDto);
     }
 }

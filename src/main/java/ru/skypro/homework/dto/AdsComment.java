@@ -9,5 +9,5 @@ public class AdsComment   {
   private OffsetDateTime createdAt;
   private Integer pk;
   private String text;
-  private Ads ads;
+
 }
