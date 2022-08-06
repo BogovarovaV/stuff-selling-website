@@ -13,7 +13,6 @@ import java.time.OffsetDateTime;
 @AllArgsConstructor
 public class Comment {
 
-
     @Id
     @GeneratedValue(strategy = GenerationType.IDENTITY)
     private Integer id;
@@ -27,5 +26,5 @@ public class Comment {
 //    private Integer author;
 
     @ManyToOne
-    private Ads ads;
+    private Advert ads;
 }

@@ -7,6 +7,7 @@ import ru.skypro.homework.dto.CreateUser;
 import ru.skypro.homework.dto.NewPassword;
 import ru.skypro.homework.dto.ResponseWrapperUser;
 import ru.skypro.homework.dto.User;
+import ru.skypro.homework.service.UserService;
 
 
 @CrossOrigin(value = "http://localhost:3000")
@@ -14,12 +15,19 @@ import ru.skypro.homework.dto.User;
 @RequestMapping("/users")
 public class UserController {
 
+    private final UserService userService;
+
+    public UserController(UserService userService) {
+        this.userService = userService;
+    }
+
     @Operation(
             tags = "Пользователи (UserController)",
             summary = "Добавление пользователя (addUser)"
     )
     @PostMapping
     public ResponseEntity<CreateUser> addUser(@RequestBody CreateUser user) {
+        userService.createUser(user);
         return ResponseEntity.ok(user);
     }
 
@@ -29,7 +37,7 @@ public class UserController {
     )
     @GetMapping("/me")
     public ResponseEntity<ResponseWrapperUser> getUsers() {
-        return ResponseEntity.ok(new ResponseWrapperUser());
+        return ResponseEntity.ok(userService.getAllUsers());
     }
 
     @Operation(
@@ -38,6 +46,10 @@ public class UserController {
     )
     @PatchMapping("/me")
     public ResponseEntity<User> updateUser(@RequestBody User user) {
+        User userDto = userService.updateUser(user);
+        if (userDto == null) {
+            return ResponseEntity.notFound().build();
+        }
         return ResponseEntity.ok(user);
     }
 
@@ -56,6 +68,10 @@ public class UserController {
     )
     @GetMapping("{id}")
     public ResponseEntity<User> getUser(@PathVariable("id") int id) {
-        return ResponseEntity.ok(new User());
+        User user = userService.getUser(id);
+        if (user == null) {
+            return ResponseEntity.notFound().build();
+        }
+        return ResponseEntity.ok(user);
     }
 }
