@@ -31,6 +31,4 @@ public class Advert {
     @ManyToMany
     private List<Comment> commentList;
 
-
-
 }
