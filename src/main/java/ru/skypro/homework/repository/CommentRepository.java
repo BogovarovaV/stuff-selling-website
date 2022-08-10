@@ -11,11 +11,13 @@ import java.util.Optional;
 @Repository
 public interface CommentRepository extends JpaRepository<Comment, Integer> {
 
-    @Query("select c from Comment c where c.ads.id = ?1 and c.id = ?2")
+    @Query(value = "select c from Comment c where c.ads.id = ?1 and c.id = ?2", nativeQuery = true)
     Optional<Comment> findAdsComment(Integer adsId, Integer id);
 
-    @Query("select c from Comment c where c.ads.id = ?1 and c.id = ?2")
+    @Query(value = "select c from Comment c where c.ads.id = ?1 and c.id = ?2", nativeQuery = true)
     Optional<Comment> deleteAdsComment(Integer adsId, Integer id);
 
     List<Comment> findAllByAdsId(Integer adsId);
+
+    List<Comment> findAllByAdsIdOrderByIdDesc(Integer adsId);
 }
