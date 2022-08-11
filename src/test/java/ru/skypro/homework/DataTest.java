@@ -23,8 +23,10 @@ public interface DataTest {
     String IMAGE = "image";
     String DESC = "description";
 
-    Integer COMMENT_ID = 1;
-    OffsetDateTime DATE_TIME = OffsetDateTime.MIN;
+    Integer COMMENT_ID_1 = 1;
+    Integer COMMENT_ID_2 = 2;
+    OffsetDateTime DATE_TIME_1 = OffsetDateTime.MIN;
+    OffsetDateTime DATE_TIME_2 = OffsetDateTime.MAX;
     String TEXT_1 = "text";
     String TEXT_2 = "updated text";
 }

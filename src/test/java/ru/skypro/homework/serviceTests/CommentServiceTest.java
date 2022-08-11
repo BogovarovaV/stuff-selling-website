@@ -31,8 +31,10 @@ import static ru.skypro.homework.DataTest.*;
 @ExtendWith(MockitoExtension.class)
 public class CommentServiceTest {
 
-    private Comment comment;
-    private AdsComment adsComment;
+    private Comment comment1;
+    private Comment comment2;
+    private AdsComment adsComment1;
+    private AdsComment adsComment2;
     private Users users;
     private Advert advert;
     private ResponseWrapperAdsComment responseWrapperAdsComment;
@@ -55,72 +57,86 @@ public class CommentServiceTest {
     @BeforeEach
     public void setUp() {
         //entity
-        comment = new Comment();
-        comment.setId(COMMENT_ID);
-        comment.setCreatedAt(DATE_TIME);
-        comment.setText(TEXT_1);
+        comment1 = new Comment();
+        comment1.setId(COMMENT_ID_1);
+        comment1.setCreatedAt(DATE_TIME_1);
+        comment1.setText(TEXT_1);
         users = new Users();
         users.setId(USER_ID);
-        comment.setUsers(users);
+        comment1.setUsers(users);
         advert = new Advert();
         advert.setId(ADS_ID);
-        comment.setAds(advert);
+        comment1.setAds(advert);
+
+        comment2 = new Comment();
+        comment2.setId(COMMENT_ID_2);
+        comment2.setCreatedAt(DATE_TIME_2);
+        comment2.setText(TEXT_2);
+        comment2.setUsers(users);
+        comment2.setAds(advert);
 
         //dto
-        adsComment = new AdsComment();
-        adsComment.setAuthor(USER_ID);
-        adsComment.setCreatedAt(DATE_TIME);
-        adsComment.setPk(COMMENT_ID);
-        adsComment.setText(TEXT_1);
+        adsComment1 = new AdsComment();
+        adsComment1.setAuthor(USER_ID);
+        adsComment1.setCreatedAt(DATE_TIME_1);
+        adsComment1.setPk(COMMENT_ID_1);
+        adsComment1.setText(TEXT_1);
+
+        adsComment2 = new AdsComment();
+        adsComment2.setAuthor(USER_ID);
+        adsComment2.setCreatedAt(DATE_TIME_2);
+        adsComment2.setPk(COMMENT_ID_2);
+        adsComment2.setText(TEXT_2);
 
         responseWrapperAdsComment = new ResponseWrapperAdsComment();
-        responseWrapperAdsComment.setCount(1);
-        responseWrapperAdsComment.setResults(Arrays.asList(adsComment));
+        responseWrapperAdsComment.setCount(2);
+        responseWrapperAdsComment.setResults(Arrays.asList(adsComment1, adsComment2));
 
         out = new CommentServiceImpl(commentRepositoryMock, advertRepositoryMock, userRepositoryMock, commentMapperMock);
     }
 
     @Test
     public void testShouldCreateComment() {
-        when(commentMapperMock.adsCommentDtoToCommentEntity(any(AdsComment.class))).thenReturn(comment);
+        when(commentMapperMock.adsCommentDtoToCommentEntity(any(AdsComment.class))).thenReturn(comment1);
         when(userRepositoryMock.findById(USER_ID)).thenReturn(Optional.of(users));
         when(advertRepositoryMock.findById(ADS_ID)).thenReturn(Optional.of(advert));
-        assertEquals(adsComment, out.createComment(ADS_ID, adsComment));
-        verify(commentRepositoryMock, times(1)).save(comment);
+        assertEquals(adsComment1, out.createComment(ADS_ID, adsComment1));
+        verify(commentRepositoryMock, times(1)).save(comment1);
     }
 
     @Test
     public void testShouldThrowExceptionWhenCommentNotFoundInDeleteRequest() {
-        when(commentRepositoryMock.findAdsComment(ADS_ID, COMMENT_ID)).thenThrow(CommentNotFoundException.class);
-        assertThrows(CommentNotFoundException.class, () -> out.deleteAdsComment(ADS_ID, COMMENT_ID));
+        when(commentRepositoryMock.findAdsComment(ADS_ID, COMMENT_ID_1)).thenThrow(CommentNotFoundException.class);
+        assertThrows(CommentNotFoundException.class, () -> out.deleteAdsComment(ADS_ID, COMMENT_ID_1));
     }
 
     @Test
-    public void testShouldGetAllAdsComment() {
-        when(commentRepositoryMock.findAllByAdsId(any())).thenReturn(Arrays.asList(comment));
-        when(commentMapperMock.commentEntitiesToAdsCommentDtos(any(List.class))).thenReturn(Arrays.asList(adsComment));
+    public void testShouldGetAllAdsCommentOrderedByIdDesc() {
+        when(commentRepositoryMock.findAllByAdsIdOrderByIdDesc(any())).thenReturn(Arrays.asList(comment1, comment2));
+        when(commentMapperMock.commentEntitiesToAdsCommentDtos(any(List.class))).thenReturn(Arrays.asList(adsComment1, adsComment2));
         assertEquals(responseWrapperAdsComment, out.getAdsAllComments(ADS_ID));
+        assertEquals(adsComment2, out.getAdsAllComments(ADS_ID).getResults().get(1));
     }
 
     @Test
     public void testShouldGetCommentById() {
-        when(commentRepositoryMock.findAdsComment(ADS_ID, COMMENT_ID)).thenReturn(Optional.ofNullable(comment));
-        when(commentMapperMock.commentEntityToAdsCommentDto(any(Comment.class))).thenReturn(adsComment);
-        assertEquals(adsComment, out.getAdsComment(ADS_ID, COMMENT_ID));
+        when(commentRepositoryMock.findAdsComment(ADS_ID, COMMENT_ID_1)).thenReturn(Optional.ofNullable(comment1));
+        when(commentMapperMock.commentEntityToAdsCommentDto(any(Comment.class))).thenReturn(adsComment1);
+        assertEquals(adsComment1, out.getAdsComment(ADS_ID, COMMENT_ID_1));
     }
 
     @Test
     public void testShouldThrowExceptionWhenCommentNotFoundInGetRequest() {
-        when(commentRepositoryMock.findAdsComment(ADS_ID, COMMENT_ID)).thenThrow(CommentNotFoundException.class);
-        assertThrows(CommentNotFoundException.class, () -> out.getAdsComment(ADS_ID, COMMENT_ID));
+        when(commentRepositoryMock.findAdsComment(ADS_ID, COMMENT_ID_1)).thenThrow(CommentNotFoundException.class);
+        assertThrows(CommentNotFoundException.class, () -> out.getAdsComment(ADS_ID, COMMENT_ID_1));
     }
 
     @Test
     public void testShouldUpdateAdsComment() {
-        comment.setText(TEXT_2);
-        adsComment.setText(TEXT_2);
-        when(commentRepositoryMock.findAdsComment(ADS_ID, COMMENT_ID)).thenReturn(Optional.of(comment));
-        assertEquals(adsComment, out.updateAdsComment(ADS_ID, COMMENT_ID, adsComment));
+        comment1.setText(TEXT_2);
+        adsComment1.setText(TEXT_2);
+        when(commentRepositoryMock.findAdsComment(ADS_ID, COMMENT_ID_1)).thenReturn(Optional.of(comment1));
+        assertEquals(adsComment1, out.updateAdsComment(ADS_ID, COMMENT_ID_1, adsComment1));
     }
 }
 
