@@ -30,7 +30,7 @@ public class AdvertServiceImpl implements AdvertService {
 
     @Override
     public ResponseWrapperAds getAllAds() {
-        List<Ads> adsDtoList = adsMapper.advertEntitiesToAdsDtos(advertRepository.findAll());
+        List<Ads> adsDtoList = adsMapper.advertEntitiesToAdsDtos(advertRepository.findAllAdverts());
         ResponseWrapperAds responseWrapperAds = new ResponseWrapperAds();
         responseWrapperAds.setCount(adsDtoList.size());
         responseWrapperAds.setResults(adsDtoList);
@@ -65,5 +65,14 @@ public class AdvertServiceImpl implements AdvertService {
         advert.setTitle(adsDto.getTitle());
         advertRepository.save(advert);
         return adsDto;
+    }
+
+    @Override
+    public ResponseWrapperAds findAds(String search) {
+        List<Ads> adsDtoList = adsMapper.advertEntitiesToAdsDtos(advertRepository.findAds(search));
+        ResponseWrapperAds responseWrapperAds = new ResponseWrapperAds();
+        responseWrapperAds.setCount(adsDtoList.size());
+        responseWrapperAds.setResults(adsDtoList);
+        return responseWrapperAds;
     }
 }

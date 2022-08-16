@@ -17,4 +17,6 @@ public interface AdvertService {
     void removeAds(Integer id);
 
     Ads updateAdvert(Integer id, Ads adsDto);
+
+    ResponseWrapperAds findAds(String search);
 }

@@ -100,6 +100,7 @@ public class AdvertServiceTest {
     public void testShouldGetAllAds() {
         when(adsMapperMock.advertEntitiesToAdsDtos(any(List.class))).thenReturn(Arrays.asList(ads));
         assertEquals(responseAds, out.getAllAds());
+        verify(advertRepositoryMock, times(1)).findAllAdverts();
     }
 
     @Test
@@ -136,5 +137,13 @@ public class AdvertServiceTest {
         when(advertRepositoryMock.findById(ADS_ID)).thenReturn(Optional.of(advert));
         when(userRepositoryMock.findById(USER_ID)).thenReturn(Optional.of(users));
         assertEquals(ads, out.updateAdvert(ADS_ID, ads));
+    }
+
+    @Test
+    public void testShouldFindAdsByTitle() {
+        when(advertRepositoryMock.findAds(TITLE)).thenReturn(Arrays.asList(advert));
+        when(adsMapperMock.advertEntitiesToAdsDtos(any(List.class))).thenReturn(Arrays.asList(ads));
+        assertEquals(responseAds, out.findAds(TITLE));
+        verify(advertRepositoryMock, times(1)).findAds(TITLE);
     }
 }

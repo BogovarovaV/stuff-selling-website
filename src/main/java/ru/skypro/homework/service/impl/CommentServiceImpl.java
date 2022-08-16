@@ -47,7 +47,7 @@ public class CommentServiceImpl implements CommentService {
 
     @Override
     public ResponseWrapperAdsComment getAdsAllComments(Integer adsId) {
-        List<AdsComment> adsCommentList = commentMapper.commentEntitiesToAdsCommentDtos(commentRepository.findAllByAdsId(adsId));
+        List<AdsComment> adsCommentList = commentMapper.commentEntitiesToAdsCommentDtos(commentRepository.findAllByAdsIdOrderByIdDesc(adsId));
         ResponseWrapperAdsComment responseWrapperAdsComment = new ResponseWrapperAdsComment();
         responseWrapperAdsComment.setCount(adsCommentList.size());
         responseWrapperAdsComment.setResults(adsCommentList);

@@ -49,6 +49,15 @@ public class AdsController {
 
     @Operation(
             tags = "Объявления (AdsController)",
+            summary = "Получение списка объявлений в результате поиска (findAds) или получение списка всех объявлений (getAllAds)"
+    )
+    @GetMapping(params = {"search"})
+    public ResponseEntity<ResponseWrapperAds> findAds(@RequestParam(required = false) String search) {
+        return ResponseEntity.ok(advertService.findAds(search));
+    }
+
+    @Operation(
+            tags = "Объявления (AdsController)",
             summary = "Удаление объявления по id (removeAds)"
     )
     @DeleteMapping("{id}")

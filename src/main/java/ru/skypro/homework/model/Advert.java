@@ -28,7 +28,7 @@ public class Advert {
     private Users users;
     //    private Integer author;
 
-    @ManyToMany
+    @OneToMany
     private List<Comment> commentList;
 
 }

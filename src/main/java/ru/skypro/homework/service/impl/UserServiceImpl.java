@@ -25,7 +25,7 @@ public class UserServiceImpl implements UserService {
 
     @Override
     public ResponseWrapperUser getAllUsers() {
-        List<User> userDtoList = userMapper.usersEntitiesToUserDtos(userRepository.findAll());
+        List<User> userDtoList = userMapper.usersEntitiesToUserDtos(userRepository.findAllUsers());
         ResponseWrapperUser responseWrapperUser = new ResponseWrapperUser();
         responseWrapperUser.setCount(userDtoList.size());
         responseWrapperUser.setResults(userDtoList);
