@@ -2,6 +2,7 @@ package ru.skypro.homework.controller;
 
 import io.swagger.v3.oas.annotations.Operation;
 import org.springframework.http.ResponseEntity;
+import org.springframework.security.access.prepost.PreAuthorize;
 import org.springframework.web.bind.annotation.*;
 import ru.skypro.homework.dto.*;
 import ru.skypro.homework.service.AdvertService;
@@ -24,19 +25,23 @@ public class AdsController {
             tags = "Объявления (AdsController)",
             summary = "Получение списка всех объявлений (getAllAds)"
     )
+
     @GetMapping
     public ResponseEntity<ResponseWrapperAds> getAllAds() {
         return ResponseEntity.ok(advertService.getAllAds());
     }
 
+
     @Operation(
             tags = "Объявления (AdsController)",
             summary = "Добавление объявления (addAds)"
     )
+    @PreAuthorize("hasRole('USER') or hasRole('ADMIN')")
     @PostMapping
     public ResponseEntity<Ads> addAds(@RequestBody CreateAds ads) {
         return ResponseEntity.ok(advertService.createAds(ads));
     }
+
 
     @Operation(
             tags = "Объявления (AdsController)",
@@ -47,6 +52,7 @@ public class AdsController {
         return ResponseEntity.ok(new ResponseWrapperAds());
     }
 
+
     @Operation(
             tags = "Объявления (AdsController)",
             summary = "Получение списка объявлений в результате поиска (findAds) или получение списка всех объявлений (getAllAds)"
@@ -56,56 +62,68 @@ public class AdsController {
         return ResponseEntity.ok(advertService.findAds(search));
     }
 
+
     @Operation(
             tags = "Объявления (AdsController)",
             summary = "Удаление объявления по id (removeAds)"
     )
+    @PreAuthorize("hasRole('USER') or hasRole('ADMIN')")
     @DeleteMapping("{id}")
     public ResponseEntity<Void> removeAds(@PathVariable int id) {
         advertService.removeAds(id);
         return ResponseEntity.ok().build();
     }
 
+
     @Operation(
             tags = "Объявления (AdsController)",
             summary = "Получение объявления по id (getAds)"
     )
+    @PreAuthorize("hasRole('USER') or hasRole('ADMIN')")
     @GetMapping("{id}")
     public ResponseEntity<FullAds> getAds(@PathVariable int id) {
         return ResponseEntity.ok(advertService.getAds(id));
     }
 
+
     @Operation(
             tags = "Объявления (AdsController)",
             summary = "Редактирование объявления по id (updateAds)"
     )
+    @PreAuthorize("hasRole('USER') or hasRole('ADMIN')")
     @PatchMapping("{id}")
     public ResponseEntity<Ads> updateAds(@PathVariable int id, @RequestBody Ads ads) {
         return ResponseEntity.ok(advertService.updateAdvert(id, ads));
     }
 
+
     @Operation(
             tags = "Отзывы (AdsController)",
             summary = "Получение списка отзывов объявления (getAdsComments)"
     )
+    @PreAuthorize("hasRole('USER') or hasRole('ADMIN')")
     @GetMapping("{ad_pk}/comment")
     public ResponseEntity<ResponseWrapperAdsComment> getAdsComments(@PathVariable int ad_pk) {
         return ResponseEntity.ok(commentService.getAdsAllComments(ad_pk));
     }
 
+
     @Operation(
             tags = "Отзывы (AdsController)",
             summary = "Добавление отзыва к объявлению (addAdsComment)"
     )
+    @PreAuthorize("hasRole('USER') or hasRole('ADMIN')")
     @PostMapping("{ad_pk}/comment")
     public ResponseEntity<AdsComment> addAdsComment(@PathVariable int ad_pk, @RequestBody AdsComment adsComment) {
         return ResponseEntity.ok(commentService.createComment(ad_pk, adsComment));
     }
 
+
     @Operation(
             tags = "Отзывы (AdsController)",
             summary = "Удаление отзыва по id (deleteAdsComment)"
     )
+    @PreAuthorize("hasRole('USER') or hasRole('ADMIN')")
     @DeleteMapping("{ad_pk}/comment/{id}")
     public ResponseEntity<Void> deleteAdsComment(@PathVariable int ad_pk,
                                                     @PathVariable int id) {
@@ -113,20 +131,24 @@ public class AdsController {
         return ResponseEntity.ok().build();
     }
 
+
     @Operation(
             tags = "Отзывы (AdsController)",
             summary = "Получение отзыва к объявлению по id (getAdsComment)"
     )
+    @PreAuthorize("hasRole('USER') or hasRole('ADMIN')")
     @GetMapping("{ad_pk}/comment/{id}")
     public ResponseEntity<AdsComment> getAdsComment(@PathVariable int ad_pk,
                                                  @PathVariable int id) {
         return ResponseEntity.ok(commentService.getAdsComment(ad_pk, id));
     }
 
+
     @Operation(
             tags = "Отзывы (AdsController)",
             summary = "Редактирование отзыва по id (updateAdsComment)"
     )
+    @PreAuthorize("hasRole('USER') or hasRole('ADMIN')")
     @PatchMapping("{ad_pk}/comment/{id}")
     public ResponseEntity<AdsComment> updateAdsComment(@PathVariable int ad_pk,
                                                     @PathVariable int id,
