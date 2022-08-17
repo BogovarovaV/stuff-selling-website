@@ -22,7 +22,8 @@ public class WebSecurityConfig {
             "/swagger-ui.html",
             "/v3/api-docs",
             "/webjars/**",
-            "/login", "/register"
+            "/login", "/register",
+            "/ads"
     };
 
     @Bean
