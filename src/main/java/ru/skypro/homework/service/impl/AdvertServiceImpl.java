@@ -1,5 +1,7 @@
 package ru.skypro.homework.service.impl;
 
+import org.springframework.security.core.Authentication;
+import org.springframework.security.core.userdetails.User;
 import org.springframework.stereotype.Service;
 import ru.skypro.homework.dto.Ads;
 import ru.skypro.homework.dto.CreateAds;
@@ -9,6 +11,7 @@ import ru.skypro.homework.exception.AdvertNotFoundException;
 import ru.skypro.homework.exception.UserNotFoundException;
 import ru.skypro.homework.mapper.AdsMapper;
 import ru.skypro.homework.model.Advert;
+import ru.skypro.homework.model.Users;
 import ru.skypro.homework.repository.AdvertRepository;
 import ru.skypro.homework.repository.UserRepository;
 import ru.skypro.homework.service.AdvertService;
@@ -65,7 +68,7 @@ public class AdvertServiceImpl implements AdvertService {
         advert.setTitle(adsDto.getTitle());
         advertRepository.save(advert);
         return adsDto;
-    }
+        }
 
     @Override
     public ResponseWrapperAds findAds(String search) {
