@@ -31,8 +31,10 @@ public class AuthController {
     @PostMapping("/login")
     public ResponseEntity<?> login(@RequestBody LoginReq req) {
         if (authService.login(req.getUsername(), req.getPassword())) {
+            System.out.println("Login");
             return ResponseEntity.ok().build();
         } else {
+            System.out.println("Login incorrect");
             return ResponseEntity.status(HttpStatus.FORBIDDEN).build();
         }
     }

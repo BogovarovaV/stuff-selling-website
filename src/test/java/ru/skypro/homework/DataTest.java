@@ -7,7 +7,7 @@ import java.time.OffsetDateTime;
 public interface DataTest {
 
     Integer USER_ID = 1;
-    Users.Roles ROLE = Users.Roles.USER;
+    Users.Role ROLE = Users.Role.USER;
     String FIRSTNAME = "USER";
     String LASTNAME = "USEROV";
     String EMAIL_1 = "uu@gmail.com";

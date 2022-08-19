@@ -35,9 +35,10 @@ public class UserController {
             tags = "Пользователи (UserController)",
             summary = "Редактирование пользователя (updateUser)"
     )
-    @PreAuthorize("hasRole('ADMIN') or #username == authentication.principal.username")
+//    @PreAuthorize("hasRole('ADMIN') or #user == authentication.principal.username")
     @PatchMapping("/me")
     public ResponseEntity<User> updateUser(@RequestBody User user) {
+        System.out.println("Updating user");
         return ResponseEntity.ok(userService.updateUser(user));
     }
 

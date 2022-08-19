@@ -17,7 +17,7 @@ public class Users {
     @GeneratedValue(strategy = GenerationType.IDENTITY)
     private Integer id;
 
-    public enum Roles {
+    public enum Role {
         USER, ADMIN
     }
 
@@ -29,7 +29,7 @@ public class Users {
     private String password;
 
     @Enumerated(EnumType.STRING)
-    private Roles roles;
+    private Role role;
 
     @OneToMany
     private List<Advert> advertsList;
