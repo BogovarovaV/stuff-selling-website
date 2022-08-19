@@ -35,7 +35,7 @@ public class UserController {
             tags = "Пользователи (UserController)",
             summary = "Редактирование пользователя (updateUser)"
     )
-    @PreAuthorize("hasRole('USER') or hasRole('ADMIN')")
+    @PreAuthorize("hasRole('ADMIN') or #username == authentication.principal.username")
     @PatchMapping("/me")
     public ResponseEntity<User> updateUser(@RequestBody User user) {
         return ResponseEntity.ok(userService.updateUser(user));
@@ -45,7 +45,7 @@ public class UserController {
             tags = "Пользователи (UserController)",
             summary = "Изменение пароля (setPassword)"
     )
-    @PreAuthorize("hasRole('USER') or hasRole('ADMIN')")
+    @PreAuthorize("#username == authentication.principal.username")
     @PostMapping("set_password")
     public ResponseEntity<NewPassword> setPassword(@RequestBody NewPassword newPassword) {
         return ResponseEntity.ok(newPassword);
