@@ -1,14 +1,19 @@
 package ru.skypro.homework.service.impl;
 
+import org.slf4j.Logger;
+import org.slf4j.LoggerFactory;
+import org.springframework.security.core.userdetails.UserDetails;
 import org.springframework.stereotype.Service;
 import ru.skypro.homework.dto.Ads;
 import ru.skypro.homework.dto.CreateAds;
 import ru.skypro.homework.dto.FullAds;
 import ru.skypro.homework.dto.ResponseWrapperAds;
 import ru.skypro.homework.exception.AdvertNotFoundException;
+import ru.skypro.homework.exception.NoAccessException;
 import ru.skypro.homework.exception.UserNotFoundException;
 import ru.skypro.homework.mapper.AdsMapper;
 import ru.skypro.homework.model.Advert;
+import ru.skypro.homework.model.Users;
 import ru.skypro.homework.repository.AdvertRepository;
 import ru.skypro.homework.repository.UserRepository;
 import ru.skypro.homework.service.AdvertService;
@@ -45,9 +50,14 @@ public class AdvertServiceImpl implements AdvertService {
     }
 
     @Override
-    public void removeAds(Integer id) {
+    public void removeAds(Integer id, String username, UserDetails userDetails) {
         Advert advert = advertRepository.findById(id).orElseThrow(AdvertNotFoundException::new);
-        advertRepository.delete(advert);
+        if (userDetails.getAuthorities().toString().contains("ROLE_ADMIN")
+                || username.equals(advert.getUsers().getUsername())) {
+            advertRepository.delete(advert);
+        } else {
+            throw new NoAccessException();
+        }
     }
 
     @Override
@@ -57,19 +67,34 @@ public class AdvertServiceImpl implements AdvertService {
     }
 
     @Override
-    public Ads updateAdvert(Integer id, Ads adsDto) {
+    public Ads updateAdvert(Integer id, Ads adsDto, String username, UserDetails userDetails) {
         Advert advert = advertRepository.findById(id).orElseThrow(AdvertNotFoundException::new);
-        advert.setUsers(userRepository.findById(adsDto.getAuthor()).orElseThrow(UserNotFoundException::new));
-        advert.setImage(adsDto.getImage());
-        advert.setPrice(adsDto.getPrice());
-        advert.setTitle(adsDto.getTitle());
-        advertRepository.save(advert);
-        return adsDto;
+        if (userDetails.getAuthorities().toString().contains("ROLE_ADMIN")
+                || username.equals(advert.getUsers().getUsername())) {
+            advert.setUsers(userRepository.findById(adsDto.getAuthor()).orElseThrow(UserNotFoundException::new));
+            advert.setImage(adsDto.getImage());
+            advert.setPrice(adsDto.getPrice());
+            advert.setTitle(adsDto.getTitle());
+            advertRepository.save(advert);
+            return adsDto;
+        } else {
+            throw new NoAccessException();
+        }
     }
 
     @Override
     public ResponseWrapperAds findAds(String search) {
         List<Ads> adsDtoList = adsMapper.advertEntitiesToAdsDtos(advertRepository.findAds(search));
+        ResponseWrapperAds responseWrapperAds = new ResponseWrapperAds();
+        responseWrapperAds.setCount(adsDtoList.size());
+        responseWrapperAds.setResults(adsDtoList);
+        return responseWrapperAds;
+    }
+
+    @Override
+    public ResponseWrapperAds getAdsMe(String username) {
+        Users users = userRepository.findUsersByUsername(username).orElseThrow(UserNotFoundException::new);
+        List<Ads> adsDtoList = adsMapper.advertEntitiesToAdsDtos(advertRepository.findAdsByUsersId(users.getId()));
         ResponseWrapperAds responseWrapperAds = new ResponseWrapperAds();
         responseWrapperAds.setCount(adsDtoList.size());
         responseWrapperAds.setResults(adsDtoList);
