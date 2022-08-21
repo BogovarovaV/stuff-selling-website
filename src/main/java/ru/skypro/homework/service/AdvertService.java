@@ -1,6 +1,7 @@
 package ru.skypro.homework.service;
 
 
+import org.springframework.security.core.userdetails.UserDetails;
 import ru.skypro.homework.dto.Ads;
 import ru.skypro.homework.dto.CreateAds;
 import ru.skypro.homework.dto.FullAds;
@@ -14,9 +15,11 @@ public interface AdvertService {
 
     FullAds getAds(Integer id);
 
-    void removeAds(Integer id);
+    void removeAds(Integer id, String username, UserDetails userDetails);
 
-    Ads updateAdvert(Integer id, Ads adsDto);
+    Ads updateAdvert(Integer id, Ads adsDto, String username, UserDetails userDetails);
 
     ResponseWrapperAds findAds(String search);
+
+    ResponseWrapperAds getAdsMe(String name);
 }

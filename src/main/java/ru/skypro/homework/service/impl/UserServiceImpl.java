@@ -1,5 +1,7 @@
 package ru.skypro.homework.service.impl;
 
+import org.slf4j.Logger;
+import org.slf4j.LoggerFactory;
 import org.springframework.stereotype.Service;
 import ru.skypro.homework.dto.ResponseWrapperUser;
 import ru.skypro.homework.dto.User;
@@ -14,6 +16,8 @@ import java.util.List;
 @Service
 public class UserServiceImpl implements UserService {
 
+    private final Logger logger = LoggerFactory.getLogger(UserServiceImpl.class);
+
     private final UserRepository userRepository;
 
     private final UserMapper userMapper;
@@ -22,6 +26,7 @@ public class UserServiceImpl implements UserService {
         this.userRepository = userRepository;
         this.userMapper = userMapper;
     }
+
 
     @Override
     public ResponseWrapperUser getAllUsers() {
@@ -33,13 +38,11 @@ public class UserServiceImpl implements UserService {
     }
 
     @Override
-    public User updateUser(User userDto) {
-        Users users = userRepository.findById(userDto.getId()).orElseThrow(UserNotFoundException::new);
-        users.setEmail(userDto.getEmail());
+    public User updateUser(User userDto, String username) {
+        Users users = userRepository.findUsersByUsername(username).orElseThrow(UserNotFoundException::new);
         users.setFirstName(userDto.getFirstName());
         users.setLastName(userDto.getLastName());
         users.setPhone(userDto.getPhone());
-        users.setUsername(userDto.getEmail());
         userRepository.save(users);
         return userDto;
     }
@@ -48,5 +51,29 @@ public class UserServiceImpl implements UserService {
     public User getUser(Integer id) {
         Users users = userRepository.findById(id).orElseThrow(UserNotFoundException::new);
         return userMapper.usersEntityToUserDto(users);
+    }
+
+    @Override
+    public Users getUserByUsername(String username) {
+        Users users = userRepository.findUsersByUsername(username).orElseThrow(UserNotFoundException::new);
+        return users;
+    }
+
+    @Override
+    public Users updateUser(Users users) {
+        Users user = userRepository.findUsersByUsername(users.getUsername()).orElseThrow(UserNotFoundException::new);
+        user.setFirstName(users.getFirstName());
+        user.setLastName(users.getLastName());
+        user.setPhone(users.getPhone());
+        userRepository.save(users);
+        logger.info("User {} has been registered", user.getFirstName());
+        return user;
+    }
+
+    @Override
+    public void savePassword(String username, String newPassword) {
+        Users users = userRepository.findUsersByUsername(username).orElseThrow(UserNotFoundException::new);
+        users.setPassword(newPassword);
+        userRepository.save(users);
     }
 }
