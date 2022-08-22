@@ -1,21 +1,20 @@
 package ru.skypro.homework;
 
+import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.context.annotation.Bean;
 import org.springframework.context.annotation.Configuration;
-import org.springframework.http.HttpMethod;
 import org.springframework.security.config.annotation.web.builders.HttpSecurity;
-import org.springframework.security.core.userdetails.User;
-import org.springframework.security.core.userdetails.UserDetails;
-import org.springframework.security.provisioning.InMemoryUserDetailsManager;
+import org.springframework.security.provisioning.JdbcUserDetailsManager;
 import org.springframework.security.web.SecurityFilterChain;
-
-import java.util.Collection;
-import java.util.HashSet;
+import javax.sql.DataSource;
 
 import static org.springframework.security.config.Customizer.withDefaults;
 
 @Configuration
 public class WebSecurityConfig {
+
+    @Autowired
+    DataSource dataSource;
 
     private static final String[] AUTH_WHITELIST = {
             "/swagger-resources/**",
@@ -23,26 +22,13 @@ public class WebSecurityConfig {
             "/v3/api-docs",
             "/webjars/**",
             "/login", "/register",
-            "/users/**"
+            "/ads"
     };
 
-//    @Bean
-//    public InMemoryUserDetailsManager userDetailsService() {
-//        UserDetails user = User.withDefaultPasswordEncoder()
-//                .username("user@gmail.com")
-//                .password("password")
-//                .roles("USER")
-//                .build();
-//        UserDetails admin = User.withDefaultPasswordEncoder()
-//                .username("estonec@gmail.com")
-//                .password("password")
-//                .roles("ADMIN")
-//                .build();
-//        Collection<UserDetails> users = new HashSet<>();
-//        users.add(user);
-//        users.add(admin);
-//        return new InMemoryUserDetailsManager(users);
-//    }
+    @Bean
+    public JdbcUserDetailsManager userDetailsManager (DataSource dataSource) {
+        return new JdbcUserDetailsManager(dataSource);
+    }
 
     @Bean
     public SecurityFilterChain filterChain(HttpSecurity http) throws Exception {
@@ -51,13 +37,16 @@ public class WebSecurityConfig {
                 .authorizeHttpRequests((authz) ->
                         authz
                                 .mvcMatchers(AUTH_WHITELIST).permitAll()
-//                                .mvcMatchers(HttpMethod.GET, "/ads/**").permitAll()
-//                                .mvcMatchers("/ads/**", "/users/**").authenticated()
 
                 )
                 .cors().disable()
                 .httpBasic(withDefaults());
         return http.build();
     }
+
+//    @Bean
+//    public PasswordEncoder encoder() {
+//        return new BCryptPasswordEncoder();
+//    }
 }
 

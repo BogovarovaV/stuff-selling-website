@@ -1,13 +1,17 @@
 package ru.skypro.homework.service.impl;
 
+import org.springframework.security.core.userdetails.UserDetails;
 import org.springframework.stereotype.Service;
 import ru.skypro.homework.dto.AdsComment;
 import ru.skypro.homework.dto.ResponseWrapperAdsComment;
 import ru.skypro.homework.exception.AdvertNotFoundException;
 import ru.skypro.homework.exception.CommentNotFoundException;
+import ru.skypro.homework.exception.NoAccessException;
 import ru.skypro.homework.exception.UserNotFoundException;
 import ru.skypro.homework.mapper.CommentMapper;
+import ru.skypro.homework.model.Advert;
 import ru.skypro.homework.model.Comment;
+import ru.skypro.homework.model.Users;
 import ru.skypro.homework.repository.AdvertRepository;
 import ru.skypro.homework.repository.CommentRepository;
 import ru.skypro.homework.repository.UserRepository;
@@ -40,10 +44,17 @@ public class CommentServiceImpl implements CommentService {
     }
 
     @Override
-    public void deleteAdsComment(Integer adsId, Integer id) {
+    public void deleteAdsComment(Integer adsId, Integer id, String username, UserDetails userDetails) {
         Comment comment = commentRepository.findAdsComment(adsId, id).orElseThrow(CommentNotFoundException::new);
-        commentRepository.delete(comment);
+        Advert advert = advertRepository.findById(adsId).orElseThrow(AdvertNotFoundException::new);
+        Users users = userRepository.getById(advert.getUsers().getId());
+        if (userDetails.getAuthorities().toString().contains("ROLE_ADMIN")
+                || username.equals(users.getUsername())) {
+            commentRepository.delete(comment);
+        } else {
+            throw new NoAccessException();
         }
+    }
 
     @Override
     public ResponseWrapperAdsComment getAdsAllComments(Integer adsId) {
@@ -61,12 +72,19 @@ public class CommentServiceImpl implements CommentService {
     }
 
     @Override
-    public AdsComment updateAdsComment(Integer adsId, Integer id, AdsComment adsCommentDto) {
+    public AdsComment updateAdsComment(Integer adsId, Integer id, AdsComment adsCommentDto, String username, UserDetails userDetails) {
         Comment comment = commentRepository.findAdsComment(adsId, id).orElseThrow(CommentNotFoundException::new);
-        comment.setCreatedAt(adsCommentDto.getCreatedAt());
-        comment.setText(adsCommentDto.getText());
-        commentRepository.save(comment);
-        return adsCommentDto;
+        Advert advert = advertRepository.findById(adsId).orElseThrow(AdvertNotFoundException::new);
+        Users users = userRepository.getById(advert.getUsers().getId());
+        if (userDetails.getAuthorities().toString().contains("ROLE_ADMIN")
+                || username.equals(users.getUsername())) {
+            comment.setCreatedAt(adsCommentDto.getCreatedAt());
+            comment.setText(adsCommentDto.getText());
+            commentRepository.save(comment);
+            return adsCommentDto;
+        } else {
+            throw new NoAccessException();
+        }
     }
 }
 

@@ -17,23 +17,18 @@ public class Users {
     @GeneratedValue(strategy = GenerationType.IDENTITY)
     private Integer id;
 
-    public enum Role {
-        USER, ADMIN
-    }
-
     private String firstName;
     private String lastName;
     private String email;
     private String phone;
     private String username;
     private String password;
-
-    @Enumerated(EnumType.STRING)
-    private Role role;
+    private boolean enabled;
 
     @OneToMany
     private List<Advert> advertsList;
 
     @OneToMany
     private List<Comment> commentList;
+
 }
