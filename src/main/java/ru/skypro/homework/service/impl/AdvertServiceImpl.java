@@ -1,7 +1,5 @@
 package ru.skypro.homework.service.impl;
 
-import org.slf4j.Logger;
-import org.slf4j.LoggerFactory;
 import org.springframework.security.core.userdetails.UserDetails;
 import org.springframework.stereotype.Service;
 import ru.skypro.homework.dto.Ads;
@@ -33,6 +31,10 @@ public class AdvertServiceImpl implements AdvertService {
         this.adsMapper = adsMapper;
     }
 
+    /**
+     * Get a list of all adverts
+     * @return list as ResponseWrapperAds (DTO)
+     */
     @Override
     public ResponseWrapperAds getAllAds() {
         List<Ads> adsDtoList = adsMapper.advertEntitiesToAdsDtos(advertRepository.findAllAdverts());
@@ -42,6 +44,11 @@ public class AdvertServiceImpl implements AdvertService {
         return responseWrapperAds;
     }
 
+    /**
+     * Create advert
+     * @param createAdsDto - advert from client
+     * @return created advert as Ads (DTO)
+     */
     @Override
     public Ads createAds(CreateAds createAdsDto) {
         Advert createdAds = adsMapper.createAdsDtoToAdvertEntity(createAdsDto);
@@ -49,6 +56,12 @@ public class AdvertServiceImpl implements AdvertService {
         return adsMapper.advertEntityToAdsDto(createdAds);
     }
 
+    /**
+     * remove advert by ID
+     * @param id - advert id
+     * @param username - username from client
+     * @param userDetails - user details from client
+     */
     @Override
     public void removeAds(Integer id, String username, UserDetails userDetails) {
         Advert advert = advertRepository.findById(id).orElseThrow(AdvertNotFoundException::new);
@@ -60,12 +73,25 @@ public class AdvertServiceImpl implements AdvertService {
         }
     }
 
+    /**
+     * Get advert by ID
+     * @param id - advert ID
+     * @return found advert as FullAds (DTO)
+     */
     @Override
     public FullAds getAds(Integer id) {
         Advert advert = advertRepository.findById(id).orElseThrow(AdvertNotFoundException::new);
         return adsMapper.advertEntityToFullAdsDto(advert);
     }
 
+    /**
+     * Update advert by ID
+     * @param id - advert ID
+     * @param adsDto - advert information as Ads (DTO) from client
+     * @param username - username from client
+     * @param userDetails - user details from client
+     * @return updated advert as Ads (DTO) or throw exception
+     */
     @Override
     public Ads updateAdvert(Integer id, Ads adsDto, String username, UserDetails userDetails) {
         Advert advert = advertRepository.findById(id).orElseThrow(AdvertNotFoundException::new);
@@ -82,6 +108,11 @@ public class AdvertServiceImpl implements AdvertService {
         }
     }
 
+    /**
+     * Find adverts by keyword(s)
+     * @param search - keyword(s) from client
+     * @return list of adverts finding by keyword(s) as ResponseWrapperAds (DTO)
+     */
     @Override
     public ResponseWrapperAds findAds(String search) {
         List<Ads> adsDtoList = adsMapper.advertEntitiesToAdsDtos(advertRepository.findAds(search));
@@ -91,6 +122,12 @@ public class AdvertServiceImpl implements AdvertService {
         return responseWrapperAds;
     }
 
+    /**
+     * Get a list of all adverts of a specific user
+     * @param username - username from client
+     * @return list of finding adverts of a specific user
+     * as ResponseWrapperAds (DTO)
+     */
     @Override
     public ResponseWrapperAds getAdsMe(String username) {
         Users users = userRepository.findUsersByUsername(username).orElseThrow(UserNotFoundException::new);

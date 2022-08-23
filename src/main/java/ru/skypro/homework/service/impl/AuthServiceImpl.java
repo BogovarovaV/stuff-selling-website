@@ -1,7 +1,5 @@
 package ru.skypro.homework.service.impl;
 
-import org.slf4j.Logger;
-import org.slf4j.LoggerFactory;
 import org.springframework.security.core.userdetails.User;
 import org.springframework.security.core.userdetails.UserDetails;
 import org.springframework.security.crypto.bcrypt.BCryptPasswordEncoder;
@@ -30,6 +28,12 @@ public class AuthServiceImpl implements AuthService {
         this.encoder = new BCryptPasswordEncoder();
     }
 
+    /**
+     * Account login by username and password
+     * @param userName - username from client
+     * @param password - password from client
+     * @return boolean result of login
+     */
     @Override
     public boolean login(String userName, String password) {
         if (!manager.userExists(userName)) {
@@ -41,6 +45,12 @@ public class AuthServiceImpl implements AuthService {
         return encoder.matches(password, encryptedPasswordWithoutEncryptionType);
     }
 
+    /**
+     * New user registration
+     * @param registerReq - new user information as RegisterReq (DTO) from client
+     * @param role - user role
+     * @return boolean result of registration
+     */
     @Override
     public boolean register(RegisterReq registerReq, Role role) {
         if (manager.userExists(registerReq.getUsername())) {
@@ -62,6 +72,12 @@ public class AuthServiceImpl implements AuthService {
         return true;
     }
 
+    /**
+     * Change user password with indicating current password
+     * @param username - username
+     * @param currentPassword - user current password
+     * @param newPassword - user new password or throw exception
+     */
     @Override
     public void changePassword(String username, String currentPassword, String newPassword) {
         UserDetails userDetails = manager.loadUserByUsername(username);

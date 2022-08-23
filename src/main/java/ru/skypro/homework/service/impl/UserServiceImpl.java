@@ -27,7 +27,10 @@ public class UserServiceImpl implements UserService {
         this.userMapper = userMapper;
     }
 
-
+    /**
+     * Get a list of all users
+     * @return list of all users as ResponseWrapperUser (DTO)
+     */
     @Override
     public ResponseWrapperUser getAllUsers() {
         List<User> userDtoList = userMapper.usersEntitiesToUserDtos(userRepository.findAllUsers());
@@ -37,6 +40,12 @@ public class UserServiceImpl implements UserService {
         return responseWrapperUser;
     }
 
+    /**
+     * Update user by username
+     * @param userDto - user information
+     * @param username - username
+     * @return updated user as User (DTO)
+     */
     @Override
     public User updateUser(User userDto, String username) {
         Users users = userRepository.findUsersByUsername(username).orElseThrow(UserNotFoundException::new);
@@ -47,18 +56,33 @@ public class UserServiceImpl implements UserService {
         return userDto;
     }
 
+    /**
+     * Get user by ID
+     * @param id - user ID from client
+     * @return found user as User (DTO)
+     */
     @Override
     public User getUser(Integer id) {
         Users users = userRepository.findById(id).orElseThrow(UserNotFoundException::new);
         return userMapper.usersEntityToUserDto(users);
     }
 
+    /**
+     * Get user by username
+     * @param username - username from client
+     * @return found user as Users (model)
+     */
     @Override
     public Users getUserByUsername(String username) {
         Users users = userRepository.findUsersByUsername(username).orElseThrow(UserNotFoundException::new);
         return users;
     }
 
+    /**
+     * Update user
+     * @param users - user information from client
+     * @return updated user as Users (model)
+     */
     @Override
     public Users updateUser(Users users) {
         Users user = userRepository.findUsersByUsername(users.getUsername()).orElseThrow(UserNotFoundException::new);
@@ -70,6 +94,11 @@ public class UserServiceImpl implements UserService {
         return user;
     }
 
+    /**
+     * Save new password
+     * @param username - username from client
+     * @param newPassword - new password from client
+     */
     @Override
     public void savePassword(String username, String newPassword) {
         Users users = userRepository.findUsersByUsername(username).orElseThrow(UserNotFoundException::new);
