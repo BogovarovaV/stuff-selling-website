@@ -5,7 +5,6 @@ import org.springframework.security.core.Authentication;
 import org.springframework.security.core.userdetails.UserDetails;
 import org.springframework.web.multipart.MultipartFile;
 import ru.skypro.homework.dto.Ads;
-import ru.skypro.homework.dto.CreateAds;
 import ru.skypro.homework.dto.FullAds;
 import ru.skypro.homework.dto.ResponseWrapperAds;
 
@@ -13,9 +12,7 @@ public interface AdvertService {
 
     ResponseWrapperAds getAllAds();
 
-//    Ads createAds(CreateAds createAdsDto, Authentication authentification);
-
- //   Ads createAds (MultipartFile image, String title, Integer price, String description, Authentication authentication);
+    Ads createAds(MultipartFile image, String title, Integer price, String description, Authentication authentication);
 
     FullAds getAds(Integer id);
 

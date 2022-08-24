@@ -5,7 +5,6 @@ import org.springframework.security.core.userdetails.UserDetails;
 import org.springframework.stereotype.Service;
 import org.springframework.web.multipart.MultipartFile;
 import ru.skypro.homework.dto.Ads;
-import ru.skypro.homework.dto.CreateAds;
 import ru.skypro.homework.dto.FullAds;
 import ru.skypro.homework.dto.ResponseWrapperAds;
 import ru.skypro.homework.exception.AdvertNotFoundException;
@@ -50,33 +49,37 @@ public class AdvertServiceImpl implements AdvertService {
 
     /**
      * Create advert
-    // * @param createAdsDto - advert from client
+     * // * @param createAdsDto - advert from client
+     *
      * @return created advert as Ads (DTO)
      */
-//    @Override
-//    public Ads createAds(MultipartFile image, String title, Integer price, String description, Authentication authentication) {
-//        Advert advert = new Advert();
-//        try {
-//            byte [] bytes = image.getBytes();
-//            advert.setImage(bytes);
-//        } catch (IOException e) {
-//            throw new RuntimeException(e);
-//        }
-//        advert.setPrice(price);
-//        advert.setDescription(description);
-//        advert.setTitle(title);
-//        Users users = userRepository.findUsersByUsername(authentication.getName()).orElseThrow(UserNotFoundException::new);
-//        System.out.println(authentication.getName() + authentication.getAuthorities().toString());
-//        advert.setUsers(users);
-//        advertRepository.save(advert);
-//        return adsMapper.advertEntityToAdsDto(advert);
-//    }
-
+    @Override
+    public Ads createAds(MultipartFile image, String title, Integer price, String description, Authentication authentication) {
+        Advert entity = new Advert();
+        try {
+            // код, который кладет картинку в entity
+            byte[] bytes = image.getBytes();
+            entity.setImage(bytes);
+        } catch (IOException e) {
+            throw new RuntimeException(e);
+        }
+        // код сохранения картинки в БД
+        Advert savedAdvert = advertRepository.saveAndFlush(entity);
+        savedAdvert.setPrice(price);
+        savedAdvert.setDescription(description);
+        savedAdvert.setTitle(title);
+        Users users = userRepository.findUsersByUsername(authentication.getName()).orElseThrow(UserNotFoundException::new);
+        System.out.println(authentication.getName() + authentication.getAuthorities().toString());
+        savedAdvert.setUsers(users);
+        advertRepository.save(savedAdvert);
+        return adsMapper.advertEntityToAdsDto(savedAdvert);
+    }
 
     /**
      * remove advert by ID
-     * @param id - advert id
-     * @param username - username from client
+     *
+     * @param id          - advert id
+     * @param username    - username from client
      * @param userDetails - user details from client
      */
     @Override
