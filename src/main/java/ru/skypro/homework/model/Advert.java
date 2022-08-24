@@ -3,6 +3,7 @@ package ru.skypro.homework.model;
 import lombok.AllArgsConstructor;
 import lombok.Data;
 import lombok.NoArgsConstructor;
+import org.hibernate.annotations.Type;
 
 import javax.persistence.*;
 import java.util.List;
@@ -21,7 +22,9 @@ public class Advert {
 
     private Integer price;
     private String title;
-    private String image;
+    @Lob
+    @Type(type = "org.hibernate.type.ImageType")
+    private byte [] image;
     private String description;
 
     @ManyToOne

@@ -12,8 +12,8 @@ import java.util.List;
 @Mapper(componentModel = "spring")
 public interface AdsMapper {
 
-    @Mapping(source = "pk", target = "id")
-    Advert createAdsDtoToAdvertEntity(CreateAds createAdsDto);
+//    @Mapping(source = "pk", target = "id")
+//    Advert createAdsDtoToAdvertEntity(CreateAds createAdsDto);
 
     @Mapping(source = "id", target = "pk")
     @Mapping(source = "users.id", target = "author")

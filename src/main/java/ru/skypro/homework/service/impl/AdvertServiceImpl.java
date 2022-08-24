@@ -1,7 +1,9 @@
 package ru.skypro.homework.service.impl;
 
+import org.springframework.security.core.Authentication;
 import org.springframework.security.core.userdetails.UserDetails;
 import org.springframework.stereotype.Service;
+import org.springframework.web.multipart.MultipartFile;
 import ru.skypro.homework.dto.Ads;
 import ru.skypro.homework.dto.CreateAds;
 import ru.skypro.homework.dto.FullAds;
@@ -16,6 +18,7 @@ import ru.skypro.homework.repository.AdvertRepository;
 import ru.skypro.homework.repository.UserRepository;
 import ru.skypro.homework.service.AdvertService;
 
+import java.io.IOException;
 import java.util.List;
 
 @Service
@@ -41,20 +44,34 @@ public class AdvertServiceImpl implements AdvertService {
         ResponseWrapperAds responseWrapperAds = new ResponseWrapperAds();
         responseWrapperAds.setCount(adsDtoList.size());
         responseWrapperAds.setResults(adsDtoList);
+        System.out.println("Отпровлено" + adsDtoList.toString());
         return responseWrapperAds;
     }
 
     /**
      * Create advert
-     * @param createAdsDto - advert from client
+    // * @param createAdsDto - advert from client
      * @return created advert as Ads (DTO)
      */
-    @Override
-    public Ads createAds(CreateAds createAdsDto) {
-        Advert createdAds = adsMapper.createAdsDtoToAdvertEntity(createAdsDto);
-        advertRepository.save(createdAds);
-        return adsMapper.advertEntityToAdsDto(createdAds);
-    }
+//    @Override
+//    public Ads createAds(MultipartFile image, String title, Integer price, String description, Authentication authentication) {
+//        Advert advert = new Advert();
+//        try {
+//            byte [] bytes = image.getBytes();
+//            advert.setImage(bytes);
+//        } catch (IOException e) {
+//            throw new RuntimeException(e);
+//        }
+//        advert.setPrice(price);
+//        advert.setDescription(description);
+//        advert.setTitle(title);
+//        Users users = userRepository.findUsersByUsername(authentication.getName()).orElseThrow(UserNotFoundException::new);
+//        System.out.println(authentication.getName() + authentication.getAuthorities().toString());
+//        advert.setUsers(users);
+//        advertRepository.save(advert);
+//        return adsMapper.advertEntityToAdsDto(advert);
+//    }
+
 
     /**
      * remove advert by ID

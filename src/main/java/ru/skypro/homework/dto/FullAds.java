@@ -1,6 +1,9 @@
 package ru.skypro.homework.dto;
 
 import lombok.Data;
+import org.hibernate.annotations.Type;
+
+import javax.persistence.Lob;
 
 @Data
 public class FullAds   {
@@ -8,7 +11,9 @@ public class FullAds   {
   private String authorLastName;
   private String description;
   private String email;
-  private String image;
+  @Lob
+  @Type(type = "org.hibernate.type.ImageType")
+  private byte [] image;
   private String phone;
   private Integer pk;
   private Integer price;

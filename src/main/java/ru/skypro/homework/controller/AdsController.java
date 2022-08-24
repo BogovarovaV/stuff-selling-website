@@ -7,9 +7,17 @@ import org.springframework.security.core.Authentication;
 import org.springframework.security.core.context.SecurityContextHolder;
 import org.springframework.security.core.userdetails.UserDetails;
 import org.springframework.web.bind.annotation.*;
+import org.springframework.web.multipart.MultipartFile;
 import ru.skypro.homework.dto.*;
+import ru.skypro.homework.exception.UserNotFoundException;
+import ru.skypro.homework.model.Advert;
+import ru.skypro.homework.model.Users;
+import ru.skypro.homework.repository.AdvertRepository;
+import ru.skypro.homework.repository.UserRepository;
 import ru.skypro.homework.service.AdvertService;
 import ru.skypro.homework.service.CommentService;
+
+import java.io.IOException;
 
 @CrossOrigin(value = "http://localhost:3000")
 @RestController
@@ -18,10 +26,14 @@ public class AdsController {
 
     private final AdvertService advertService;
     private final CommentService commentService;
+    private final AdvertRepository advertRepository;
+    private final UserRepository userRepository;
 
-    public AdsController(AdvertService advertService, CommentService commentService) {
+    public AdsController(AdvertService advertService, CommentService commentService, AdvertRepository advertRepository, UserRepository userRepository) {
         this.advertService = advertService;
         this.commentService = commentService;
+        this.advertRepository = advertRepository;
+        this.userRepository = userRepository;
     }
 
     @Operation(
@@ -31,6 +43,7 @@ public class AdsController {
 
     @GetMapping
     public ResponseEntity<ResponseWrapperAds> getAllAds() {
+        System.out.println("Зопрошено");
         return ResponseEntity.ok(advertService.getAllAds());
     }
 
@@ -40,9 +53,39 @@ public class AdsController {
             summary = "Добавление объявления (addAds)"
     )
     @PreAuthorize("hasAnyRole('ROLE_ADMIN','ROLE_USER')")
-    @PostMapping
-    public ResponseEntity<Ads> addAds(@RequestBody CreateAds ads) {
-        return ResponseEntity.ok(advertService.createAds(ads));
+//    @PostMapping(value= "/upl", produces = {MediaType.MULTIPART_FORM_DATA_VALUE})
+//    public ResponseEntity <Ads>  addAds(@RequestPart MultipartFile image,
+//                                      @RequestParam String title,
+//                                      @RequestParam Integer price,
+//                                      @RequestParam String description) {
+//        Authentication authentication = SecurityContextHolder.getContext().getAuthentication();
+//        return ResponseEntity.ok(advertService.createAds(image, title, price, description, authentication));
+//    }
+
+    @PostMapping("/upl")
+    public Advert saveAds(@RequestParam MultipartFile image,
+                           @RequestParam String title,
+                           @RequestParam Integer price,
+                           @RequestParam String description) {
+        Advert entity = new Advert();
+        try {
+            // код, который кладет картинку в entity
+            byte[] bytes = image.getBytes();
+            entity.setImage(bytes);
+        } catch (IOException e) {
+            throw new RuntimeException(e);
+        }
+        entity.setId(16654);
+        // код сохранения картинки в БД
+        Advert savedEntity = advertRepository.saveAndFlush(entity);
+        savedEntity.setPrice(price);
+        savedEntity.setDescription(description);
+        savedEntity.setTitle(title);
+        Authentication authentication = SecurityContextHolder.getContext().getAuthentication();
+        Users users = userRepository.findUsersByUsername(authentication.getName()).orElseThrow(UserNotFoundException::new);
+        System.out.println(authentication.getName() + authentication.getAuthorities().toString());
+        savedEntity.setUsers(users);
+        return savedEntity;
     }
 
 
