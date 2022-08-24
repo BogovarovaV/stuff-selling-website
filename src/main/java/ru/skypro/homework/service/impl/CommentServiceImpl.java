@@ -34,6 +34,12 @@ public class CommentServiceImpl implements CommentService {
         this.commentMapper = commentMapper;
     }
 
+    /**
+     * Create comment by advert ID
+     * @param adsId - advert ID from client
+     * @param adsCommentDto - advert information from client
+     * @return created comment as AdsComment (DTO)
+     */
     @Override
     public AdsComment createComment(Integer adsId, AdsComment adsCommentDto) {
         Comment createdComment = commentMapper.adsCommentDtoToCommentEntity(adsCommentDto);
@@ -43,6 +49,13 @@ public class CommentServiceImpl implements CommentService {
         return adsCommentDto;
     }
 
+    /**
+     * Delete comment by advert ID and comment ID
+     * @param adsId - advert ID from client
+     * @param id - comment ID from client
+     * @param username username from client
+     * @param userDetails - user details from client
+     */
     @Override
     public void deleteAdsComment(Integer adsId, Integer id, String username, UserDetails userDetails) {
         Comment comment = commentRepository.findAdsComment(adsId, id).orElseThrow(CommentNotFoundException::new);
@@ -56,6 +69,12 @@ public class CommentServiceImpl implements CommentService {
         }
     }
 
+    /**
+     * Get all comments of a specific advert by advert ID
+     * @param adsId - advert ID from client
+     * @return list of all comments of a specific advert
+     * as ResponseWrapperAdsComment (DTO)
+     */
     @Override
     public ResponseWrapperAdsComment getAdsAllComments(Integer adsId) {
         List<AdsComment> adsCommentList = commentMapper.commentEntitiesToAdsCommentDtos(commentRepository.findAllByAdsIdOrderByIdDesc(adsId));
@@ -65,12 +84,27 @@ public class CommentServiceImpl implements CommentService {
         return responseWrapperAdsComment;
     }
 
+    /**
+     * Get comment of an advert by advert ID and comment ID
+     * @param adsId - advert ID from client
+     * @param id - comment ID from client
+     * @return found comment as AdsComment (DTO)
+     */
     @Override
     public AdsComment getAdsComment(Integer adsId, Integer id) {
         Comment comment = commentRepository.findAdsComment(adsId, id).orElseThrow(CommentNotFoundException::new);
         return commentMapper.commentEntityToAdsCommentDto(comment);
     }
 
+    /**
+     * Update advert comment by advert ID and comment ID
+     * @param adsId - advert ID from client
+     * @param id - comment ID from client
+     * @param adsCommentDto - comment information from client
+     * @param username - username from client
+     * @param userDetails - user details from client
+     * @return updated comment as AdsComment (DTO) or throw exception
+     */
     @Override
     public AdsComment updateAdsComment(Integer adsId, Integer id, AdsComment adsCommentDto, String username, UserDetails userDetails) {
         Comment comment = commentRepository.findAdsComment(adsId, id).orElseThrow(CommentNotFoundException::new);
