@@ -22,9 +22,11 @@ public class Advert {
 
     private Integer price;
     private String title;
-    @Lob
-    @Type(type = "org.hibernate.type.ImageType")
-    private byte [] image;
+//    @Lob
+//    @Type(type = "org.hibernate.type.ImageType")
+//    private byte [] image;
+
+    private String imagePath;
     private String description;
 
     @ManyToOne
@@ -33,5 +35,8 @@ public class Advert {
 
     @OneToMany
     private List<Comment> commentList;
+
+//    @OneToOne
+//    private AdsAvatar adsAvatar;
 
 }

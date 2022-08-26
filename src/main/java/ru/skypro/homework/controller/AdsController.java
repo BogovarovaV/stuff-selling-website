@@ -1,7 +1,6 @@
 package ru.skypro.homework.controller;
 
 import io.swagger.v3.oas.annotations.Operation;
-import org.springframework.http.HttpHeaders;
 import org.springframework.http.MediaType;
 import org.springframework.http.ResponseEntity;
 import org.springframework.security.access.prepost.PreAuthorize;
@@ -11,6 +10,7 @@ import org.springframework.security.core.userdetails.UserDetails;
 import org.springframework.web.bind.annotation.*;
 import org.springframework.web.multipart.MultipartFile;
 import ru.skypro.homework.dto.*;
+import ru.skypro.homework.service.AdsAvatarService;
 import ru.skypro.homework.service.AdvertService;
 import ru.skypro.homework.service.CommentService;
 
@@ -21,10 +21,12 @@ public class AdsController {
 
     private final AdvertService advertService;
     private final CommentService commentService;
+    private final AdsAvatarService adsAvatarService;
 
-    public AdsController(AdvertService advertService, CommentService commentService) {
+    public AdsController(AdvertService advertService, CommentService commentService, AdsAvatarService adsAvatarService) {
         this.advertService = advertService;
         this.commentService = commentService;
+        this.adsAvatarService = adsAvatarService;
     }
 
     @Operation(
@@ -43,13 +45,11 @@ public class AdsController {
             summary = "Добавление объявления (addAds)"
     )
     @PreAuthorize("hasAnyRole('ROLE_ADMIN','ROLE_USER')")
-    @PostMapping("/upl")
-    public ResponseEntity<Ads> createAds(@RequestParam MultipartFile image,
-                                         @RequestParam String title,
-                                         @RequestParam Integer price,
-                                         @RequestParam String description) {
+    @PostMapping
+    public ResponseEntity<Ads> createAds(@ModelAttribute CreateAds ads, @RequestParam MultipartFile image) {
+        System.out.println("Create ads called");
         Authentication authentication = SecurityContextHolder.getContext().getAuthentication();
-        return ResponseEntity.ok(advertService.createAds(image, title, price, description, authentication));
+        return ResponseEntity.ok(advertService.createAds(ads, image, authentication));
     }
 
     @Operation(
@@ -78,7 +78,7 @@ public class AdsController {
             summary = "Удаление объявления по id (removeAds)"
     )
     @PreAuthorize("hasAnyRole('ROLE_ADMIN','ROLE_USER')")
-    @DeleteMapping("{id}")
+    @DeleteMapping("/{id}")
     public ResponseEntity<Void> removeAds(@PathVariable int id) {
         Authentication authentication = SecurityContextHolder.getContext().getAuthentication();
         UserDetails userDetails = (UserDetails) authentication.getPrincipal();
@@ -92,7 +92,7 @@ public class AdsController {
             summary = "Получение объявления по id (getAds)"
     )
     @PreAuthorize("hasAnyRole('ROLE_ADMIN','ROLE_USER')")
-    @GetMapping("{id}")
+    @GetMapping("/{id}")
     public ResponseEntity<FullAds> getAds(@PathVariable int id) {
         return ResponseEntity.ok(advertService.getAds(id));
     }

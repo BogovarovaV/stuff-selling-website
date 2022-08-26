@@ -8,9 +8,7 @@ import javax.persistence.Lob;
 @Data
 public class Ads {
   private Integer author;
-  @Lob
-  @Type(type = "org.hibernate.type.ImageType")
-  private byte [] image;
+//  private String imagePath;
   private Integer pk;
   private Integer price;
   private String title;

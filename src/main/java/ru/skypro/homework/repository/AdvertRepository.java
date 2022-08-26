@@ -18,4 +18,7 @@ public interface AdvertRepository extends JpaRepository<Advert, Integer> {
 
     @Query(value = "select * from advert where advert.users_id =?1", nativeQuery = true)
     List<Advert> findAdsByUsersId(Integer author);
+
+    Advert findByImagePath(String imagePath);
+
 }

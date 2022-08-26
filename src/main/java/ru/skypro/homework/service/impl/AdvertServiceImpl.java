@@ -5,6 +5,7 @@ import org.springframework.security.core.userdetails.UserDetails;
 import org.springframework.stereotype.Service;
 import org.springframework.web.multipart.MultipartFile;
 import ru.skypro.homework.dto.Ads;
+import ru.skypro.homework.dto.CreateAds;
 import ru.skypro.homework.dto.FullAds;
 import ru.skypro.homework.dto.ResponseWrapperAds;
 import ru.skypro.homework.exception.AdvertNotFoundException;
@@ -15,9 +16,9 @@ import ru.skypro.homework.model.Advert;
 import ru.skypro.homework.model.Users;
 import ru.skypro.homework.repository.AdvertRepository;
 import ru.skypro.homework.repository.UserRepository;
+import ru.skypro.homework.service.AdsAvatarService;
 import ru.skypro.homework.service.AdvertService;
 
-import java.io.IOException;
 import java.util.List;
 
 @Service
@@ -26,19 +27,24 @@ public class AdvertServiceImpl implements AdvertService {
     private final AdvertRepository advertRepository;
     private final UserRepository userRepository;
     private final AdsMapper adsMapper;
+    private final AdsAvatarService adsAvatarService;
 
-    public AdvertServiceImpl(AdvertRepository advertRepository, UserRepository userRepository, AdsMapper adsMapper) {
+
+    public AdvertServiceImpl(AdvertRepository advertRepository, UserRepository userRepository, AdsMapper adsMapper, AdsAvatarService adsAvatarService) {
         this.advertRepository = advertRepository;
         this.userRepository = userRepository;
         this.adsMapper = adsMapper;
+        this.adsAvatarService = adsAvatarService;
     }
 
     /**
      * Get a list of all adverts
+     *
      * @return list as ResponseWrapperAds (DTO)
      */
     @Override
     public ResponseWrapperAds getAllAds() {
+        System.out.println("Get all ads service called");
         List<Ads> adsDtoList = adsMapper.advertEntitiesToAdsDtos(advertRepository.findAllAdverts());
         ResponseWrapperAds responseWrapperAds = new ResponseWrapperAds();
         responseWrapperAds.setCount(adsDtoList.size());
@@ -53,26 +59,16 @@ public class AdvertServiceImpl implements AdvertService {
      *
      * @return created advert as Ads (DTO)
      */
+
     @Override
-    public Ads createAds(MultipartFile image, String title, Integer price, String description, Authentication authentication) {
-        Advert entity = new Advert();
-        try {
-            // код, который кладет картинку в entity
-            byte[] bytes = image.getBytes();
-            entity.setImage(bytes);
-        } catch (IOException e) {
-            throw new RuntimeException(e);
-        }
-        // код сохранения картинки в БД
-        Advert savedAdvert = advertRepository.saveAndFlush(entity);
-        savedAdvert.setPrice(price);
-        savedAdvert.setDescription(description);
-        savedAdvert.setTitle(title);
-        Users users = userRepository.findUsersByUsername(authentication.getName()).orElseThrow(UserNotFoundException::new);
-        System.out.println(authentication.getName() + authentication.getAuthorities().toString());
-        savedAdvert.setUsers(users);
-        advertRepository.save(savedAdvert);
-        return adsMapper.advertEntityToAdsDto(savedAdvert);
+    public Ads createAds(CreateAds createAdsDto, MultipartFile image, Authentication authentication) {
+        System.out.println("Create ads service called");
+        Advert createdAds = adsMapper.createAdsDtoToAdvertEntity(createAdsDto);
+        System.out.println("dto" + createAdsDto.getDescription());
+        createdAds.setUsers(userRepository.findUsersByUsername(authentication.getName()).orElseThrow(UserNotFoundException::new));
+        createdAds.setImagePath("/api/" + adsAvatarService.saveAds(image) + "/image");
+        advertRepository.save(createdAds);
+        return adsMapper.advertEntityToAdsDto(createdAds);
     }
 
     /**
@@ -95,6 +91,7 @@ public class AdvertServiceImpl implements AdvertService {
 
     /**
      * Get advert by ID
+     *
      * @param id - advert ID
      * @return found advert as FullAds (DTO)
      */
@@ -106,9 +103,10 @@ public class AdvertServiceImpl implements AdvertService {
 
     /**
      * Update advert by ID
-     * @param id - advert ID
-     * @param adsDto - advert information as Ads (DTO) from client
-     * @param username - username from client
+     *
+     * @param id          - advert ID
+     * @param adsDto      - advert information as Ads (DTO) from client
+     * @param username    - username from client
      * @param userDetails - user details from client
      * @return updated advert as Ads (DTO) or throw exception
      */
@@ -118,7 +116,7 @@ public class AdvertServiceImpl implements AdvertService {
         if (userDetails.getAuthorities().toString().contains("ROLE_ADMIN")
                 || username.equals(advert.getUsers().getUsername())) {
             advert.setUsers(userRepository.findById(adsDto.getAuthor()).orElseThrow(UserNotFoundException::new));
-            advert.setImage(adsDto.getImage());
+            //        advert.setImage(adsDto.getImage());
             advert.setPrice(adsDto.getPrice());
             advert.setTitle(adsDto.getTitle());
             advertRepository.save(advert);
@@ -130,6 +128,7 @@ public class AdvertServiceImpl implements AdvertService {
 
     /**
      * Find adverts by keyword(s)
+     *
      * @param search - keyword(s) from client
      * @return list of adverts finding by keyword(s) as ResponseWrapperAds (DTO)
      */
@@ -144,6 +143,7 @@ public class AdvertServiceImpl implements AdvertService {
 
     /**
      * Get a list of all adverts of a specific user
+     *
      * @param username - username from client
      * @return list of finding adverts of a specific user
      * as ResponseWrapperAds (DTO)
