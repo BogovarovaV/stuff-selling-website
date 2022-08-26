@@ -1,15 +1,9 @@
 package ru.skypro.homework.controller;
 
-import org.springframework.core.io.InputStreamResource;
 import org.springframework.http.MediaType;
-import org.springframework.http.ResponseEntity;
 import org.springframework.web.bind.annotation.*;
 import org.springframework.web.multipart.MultipartFile;
-import ru.skypro.homework.dto.CreateAds;
-import ru.skypro.homework.model.Advert;
 import ru.skypro.homework.service.AdsAvatarService;
-
-import java.io.InputStream;
 
 @CrossOrigin(value = "http://localhost:3000")
 @RestController
