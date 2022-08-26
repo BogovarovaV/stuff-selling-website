@@ -12,6 +12,7 @@ import java.util.List;
 @Mapper(componentModel = "spring")
 public interface AdsMapper {
 
+    @Mapping(target = "image", ignore = true)
     Advert createAdsDtoToAdvertEntity(CreateAds createAdsDto);
 
     @Mapping(source = "id", target = "pk")

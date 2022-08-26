@@ -15,11 +15,11 @@ public interface AdvertService {
 
     FullAds getAds(Integer id);
 
-    Ads createAds(CreateAds createAdsDto, MultipartFile image, Authentication authentication);
+    Ads createAds(CreateAds createAdsDto, MultipartFile file, Authentication authentication);
 
     void removeAds(Integer id, String username, UserDetails userDetails);
 
-    Ads updateAdvert(Integer id, Ads adsDto, String username, UserDetails userDetails);
+    Ads updateAdvert(Integer id, Ads adsDto, String username, UserDetails userDetails, MultipartFile file);
 
     ResponseWrapperAds findAds(String search);
 

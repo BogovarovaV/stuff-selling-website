@@ -7,6 +7,7 @@ import ru.skypro.homework.repository.AdsAvatarRepository;
 import ru.skypro.homework.service.AdsAvatarService;
 
 import java.io.IOException;
+import java.util.Optional;
 import java.util.UUID;
 
 @Service
@@ -19,12 +20,12 @@ public class AdsAvatarServiceImpl implements AdsAvatarService {
     }
 
     @Override
-    public String saveAds(MultipartFile image) {
+    public String saveAds(MultipartFile file) {
         System.out.println("Save ads service was called");
         AdsAvatar adsAvatar = new AdsAvatar();
         try {
             // код, который кладет картинку в entity
-            byte[] bytes = image.getBytes();
+            byte[] bytes = file.getBytes();
             adsAvatar.setImage(bytes);
         } catch (
                 IOException e) {
@@ -36,9 +37,23 @@ public class AdsAvatarServiceImpl implements AdsAvatarService {
         return savedAdsAvatar.getId();
     }
 
+//    @Override
+//    public Resource getAdsAvatar(String id) {
+//        System.out.println("Аватар зопрошен");
+//        byte[] image = adsAvatarRepository.findById(id).orElseThrow(() -> new ResponseStatusException(HttpStatus.NOT_FOUND))
+//                .getImage();
+//
+//        return new ByteArrayResource(image);
+//    }
+
     @Override
-    public byte [] getAdsAvatar(String id) {
+    public byte[] getAdsAvatar(String id) {
         System.out.println("Аватар зопрошен");
-        return adsAvatarRepository.findById(id).get().getImage();
+        Optional<AdsAvatar> adsAvatar = adsAvatarRepository.findById(id);
+        byte[] images = null;
+        if (adsAvatarRepository.findById(id).isPresent()) {
+            images = adsAvatar.get().getImage();
+        }
+        return images;
     }
 }

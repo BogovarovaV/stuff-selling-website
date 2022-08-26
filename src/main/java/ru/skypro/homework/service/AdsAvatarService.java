@@ -4,7 +4,7 @@ import org.springframework.web.multipart.MultipartFile;
 
 public interface AdsAvatarService {
 
-    String saveAds(MultipartFile image);
+    String saveAds(MultipartFile file);
 
     byte [] getAdsAvatar(String id);
 

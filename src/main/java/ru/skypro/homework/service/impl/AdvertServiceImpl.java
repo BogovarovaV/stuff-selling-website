@@ -61,12 +61,12 @@ public class AdvertServiceImpl implements AdvertService {
      */
 
     @Override
-    public Ads createAds(CreateAds createAdsDto, MultipartFile image, Authentication authentication) {
+    public Ads createAds(CreateAds createAdsDto, MultipartFile file, Authentication authentication) {
         System.out.println("Create ads service called");
         Advert createdAds = adsMapper.createAdsDtoToAdvertEntity(createAdsDto);
         System.out.println("dto" + createAdsDto.getDescription());
         createdAds.setUsers(userRepository.findUsersByUsername(authentication.getName()).orElseThrow(UserNotFoundException::new));
-        createdAds.setImagePath("/api/" + adsAvatarService.saveAds(image) + "/image");
+        createdAds.setImage("/api/" + adsAvatarService.saveAds(file) + "/image");
         advertRepository.save(createdAds);
         return adsMapper.advertEntityToAdsDto(createdAds);
     }
@@ -111,16 +111,17 @@ public class AdvertServiceImpl implements AdvertService {
      * @return updated advert as Ads (DTO) or throw exception
      */
     @Override
-    public Ads updateAdvert(Integer id, Ads adsDto, String username, UserDetails userDetails) {
+    public Ads updateAdvert(Integer id, Ads adsDto, String username, UserDetails userDetails, MultipartFile file) {
         Advert advert = advertRepository.findById(id).orElseThrow(AdvertNotFoundException::new);
         if (userDetails.getAuthorities().toString().contains("ROLE_ADMIN")
                 || username.equals(advert.getUsers().getUsername())) {
-            advert.setUsers(userRepository.findById(adsDto.getAuthor()).orElseThrow(UserNotFoundException::new));
-            //        advert.setImage(adsDto.getImage());
+            advert.setUsers(userRepository.findUsersByUsername(username).orElseThrow(UserNotFoundException::new));
+            advert.setImage(adsAvatarService.saveAds(file));
             advert.setPrice(adsDto.getPrice());
             advert.setTitle(adsDto.getTitle());
+            advert.setDescription(adsDto.getDescription());
             advertRepository.save(advert);
-            return adsDto;
+            return adsMapper.advertEntityToAdsDto(advert);
         } else {
             throw new NoAccessException();
         }

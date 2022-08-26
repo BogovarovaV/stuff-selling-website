@@ -4,7 +4,9 @@ import lombok.AllArgsConstructor;
 import lombok.Data;
 import lombok.NoArgsConstructor;
 
-import javax.persistence.*;
+import javax.persistence.Entity;
+import javax.persistence.Id;
+import javax.persistence.Lob;
 
 @Entity
 @Data
@@ -17,7 +19,5 @@ public class AdsAvatar {
 
     @Lob
     private byte[] image;
-
- //   private Integer adsId;
 
 }

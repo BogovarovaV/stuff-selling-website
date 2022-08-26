@@ -1,5 +1,6 @@
 package ru.skypro.homework.controller;
 
+import com.sun.istack.NotNull;
 import io.swagger.v3.oas.annotations.Operation;
 import org.springframework.http.ResponseEntity;
 import org.springframework.security.access.prepost.PreAuthorize;
@@ -12,6 +13,9 @@ import ru.skypro.homework.dto.*;
 import ru.skypro.homework.service.AdsAvatarService;
 import ru.skypro.homework.service.AdvertService;
 import ru.skypro.homework.service.CommentService;
+
+import javax.validation.Valid;
+import javax.validation.constraints.NotBlank;
 
 @CrossOrigin(value = "http://localhost:3000")
 @RestController
@@ -45,10 +49,11 @@ public class AdsController {
     )
     @PreAuthorize("hasAnyRole('ROLE_ADMIN','ROLE_USER')")
     @PostMapping
-    public ResponseEntity<Ads> createAds(@ModelAttribute CreateAds ads, @RequestParam MultipartFile image) {
+    public ResponseEntity<Ads> createAds(@RequestPart("properties") @Valid @NotNull @NotBlank CreateAds ads,
+                                         @RequestPart("image") @Valid @NotNull @NotBlank MultipartFile file) {
         System.out.println("Create ads called");
         Authentication authentication = SecurityContextHolder.getContext().getAuthentication();
-        return ResponseEntity.ok(advertService.createAds(ads, image, authentication));
+        return ResponseEntity.ok(advertService.createAds(ads, file, authentication));
     }
 
     @Operation(
@@ -103,10 +108,12 @@ public class AdsController {
     )
     @PreAuthorize("hasAnyRole('ROLE_ADMIN','ROLE_USER')")
     @PatchMapping("{id}")
-    public ResponseEntity<Ads> updateAds(@PathVariable int id, @RequestBody Ads ads) {
+    public ResponseEntity<Ads> updateAds(@PathVariable int id,
+                                         @RequestPart("properties") @Valid @NotNull @NotBlank Ads ads,
+                                         @RequestPart("image") @Valid @NotNull @NotBlank MultipartFile file) {
         Authentication authentication = SecurityContextHolder.getContext().getAuthentication();
         UserDetails userDetails = (UserDetails) authentication.getPrincipal();
-        return ResponseEntity.ok(advertService.updateAdvert(id, ads, authentication.getName(), userDetails));
+        return ResponseEntity.ok(advertService.updateAdvert(id, ads, authentication.getName(), userDetails, file));
     }
 
 
