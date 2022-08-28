@@ -122,7 +122,7 @@ public class AdsController {
             summary = "Получение списка отзывов объявления (getAdsComments)"
     )
     @PreAuthorize("hasAnyRole('ROLE_ADMIN','ROLE_USER')")
-    @GetMapping("{ad_pk}/comment")
+    @GetMapping("{ad_pk}/comments")
     public ResponseEntity<ResponseWrapperAdsComment> getAdsComments(@PathVariable int ad_pk) {
         return ResponseEntity.ok(commentService.getAdsAllComments(ad_pk));
     }
@@ -133,7 +133,7 @@ public class AdsController {
             summary = "Добавление отзыва к объявлению (addAdsComment)"
     )
     @PreAuthorize("hasAnyRole('ROLE_ADMIN','ROLE_USER')")
-    @PostMapping("{ad_pk}/comment")
+    @PostMapping("{ad_pk}/comments")
     public ResponseEntity<AdsComment> addAdsComment(@PathVariable int ad_pk, @RequestBody AdsComment adsComment) {
         return ResponseEntity.ok(commentService.createComment(ad_pk, adsComment));
     }
@@ -144,7 +144,7 @@ public class AdsController {
             summary = "Удаление отзыва по id (deleteAdsComment)"
     )
     @PreAuthorize("hasAnyRole('ROLE_ADMIN','ROLE_USER')")
-    @DeleteMapping("{ad_pk}/comment/{id}")
+    @DeleteMapping("{ad_pk}/comments/{id}")
     public ResponseEntity<Void> deleteAdsComment(@PathVariable int ad_pk,
                                                     @PathVariable int id) {
         Authentication authentication = SecurityContextHolder.getContext().getAuthentication();
@@ -159,7 +159,7 @@ public class AdsController {
             summary = "Получение отзыва к объявлению по id (getAdsComment)"
     )
     @PreAuthorize("hasAnyRole('ROLE_ADMIN','ROLE_USER')")
-    @GetMapping("{ad_pk}/comment/{id}")
+    @GetMapping("{ad_pk}/comments/{id}")
     public ResponseEntity<AdsComment> getAdsComment(@PathVariable int ad_pk,
                                                  @PathVariable int id) {
         return ResponseEntity.ok(commentService.getAdsComment(ad_pk, id));
@@ -171,7 +171,7 @@ public class AdsController {
             summary = "Редактирование отзыва по id (updateAdsComment)"
     )
     @PreAuthorize("hasAnyRole('ROLE_ADMIN','ROLE_USER')")
-    @PatchMapping("{ad_pk}/comment/{id}")
+    @PatchMapping("{ad_pk}/comments/{id}")
     public ResponseEntity<AdsComment> updateAdsComment(@PathVariable int ad_pk,
                                                     @PathVariable int id,
                                                     @RequestBody AdsComment comment) {

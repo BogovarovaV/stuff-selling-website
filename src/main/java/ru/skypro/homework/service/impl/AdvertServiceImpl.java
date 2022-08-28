@@ -115,7 +115,7 @@ public class AdvertServiceImpl implements AdvertService {
         Advert advert = advertRepository.findById(id).orElseThrow(AdvertNotFoundException::new);
         if (userDetails.getAuthorities().toString().contains("ROLE_ADMIN")
                 || username.equals(advert.getUsers().getUsername())) {
-            advert.setUsers(userRepository.findUsersByUsername(username).orElseThrow(UserNotFoundException::new));
+        //    advert.setUsers(userRepository.findUsersByUsername(username).orElseThrow(UserNotFoundException::new));
             advert.setImage(adsAvatarService.saveAds(file));
             advert.setPrice(adsDto.getPrice());
             advert.setTitle(adsDto.getTitle());
