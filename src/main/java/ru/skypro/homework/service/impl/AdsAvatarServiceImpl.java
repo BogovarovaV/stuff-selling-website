@@ -37,15 +37,6 @@ public class AdsAvatarServiceImpl implements AdsAvatarService {
         return savedAdsAvatar.getId();
     }
 
-//    @Override
-//    public Resource getAdsAvatar(String id) {
-//        System.out.println("Аватар зопрошен");
-//        byte[] image = adsAvatarRepository.findById(id).orElseThrow(() -> new ResponseStatusException(HttpStatus.NOT_FOUND))
-//                .getImage();
-//
-//        return new ByteArrayResource(image);
-//    }
-
     @Override
     public byte[] getAdsAvatar(String id) {
         System.out.println("Аватар зопрошен");

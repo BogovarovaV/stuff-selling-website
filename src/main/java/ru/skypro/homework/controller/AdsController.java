@@ -52,7 +52,7 @@ public class AdsController {
     @PreAuthorize("hasAnyRole('ROLE_ADMIN','ROLE_USER')")
     @PostMapping
     public ResponseEntity<Ads> createAds(@RequestPart("properties") @Valid CreateAds ads,
-                                         @RequestPart("image") @Valid @NotNull @NotBlank MultipartFile file) {
+                                         @RequestPart("image") @Valid @NotNull MultipartFile file) {
         System.out.println("Create ads called");
         Authentication authentication = SecurityContextHolder.getContext().getAuthentication();
         return ResponseEntity.ok(advertService.createAds(ads, file, authentication));
@@ -112,7 +112,7 @@ public class AdsController {
     @PatchMapping("{id}")
     public ResponseEntity<Ads> updateAds(@PathVariable int id,
                                          @RequestPart("properties") @Valid Ads ads,
-                                         @RequestPart("image") @Valid @NotNull @NotBlank MultipartFile file) {
+                                         @RequestPart("image") @Valid @NotNull MultipartFile file) {
         Authentication authentication = SecurityContextHolder.getContext().getAuthentication();
         UserDetails userDetails = (UserDetails) authentication.getPrincipal();
         return ResponseEntity.ok(advertService.updateAdvert(id, ads, authentication.getName(), userDetails, file));
