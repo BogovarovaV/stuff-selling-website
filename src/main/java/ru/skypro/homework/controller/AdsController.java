@@ -1,5 +1,6 @@
 package ru.skypro.homework.controller;
 
+import com.sun.istack.NotNull;
 import io.swagger.v3.oas.annotations.Operation;
 import org.springframework.http.ResponseEntity;
 import org.springframework.security.access.prepost.PreAuthorize;
@@ -7,9 +8,14 @@ import org.springframework.security.core.Authentication;
 import org.springframework.security.core.context.SecurityContextHolder;
 import org.springframework.security.core.userdetails.UserDetails;
 import org.springframework.web.bind.annotation.*;
+import org.springframework.web.multipart.MultipartFile;
 import ru.skypro.homework.dto.*;
+import ru.skypro.homework.service.AdsAvatarService;
 import ru.skypro.homework.service.AdvertService;
 import ru.skypro.homework.service.CommentService;
+
+import javax.validation.Valid;
+import javax.validation.constraints.NotBlank;
 
 @CrossOrigin(value = "http://localhost:3000")
 @RestController
@@ -18,10 +24,12 @@ public class AdsController {
 
     private final AdvertService advertService;
     private final CommentService commentService;
+    private final AdsAvatarService adsAvatarService;
 
-    public AdsController(AdvertService advertService, CommentService commentService) {
+    public AdsController(AdvertService advertService, CommentService commentService, AdsAvatarService adsAvatarService) {
         this.advertService = advertService;
         this.commentService = commentService;
+        this.adsAvatarService = adsAvatarService;
     }
 
     @Operation(
@@ -31,9 +39,9 @@ public class AdsController {
 
     @GetMapping
     public ResponseEntity<ResponseWrapperAds> getAllAds() {
+        System.out.println("Зопрошено");
         return ResponseEntity.ok(advertService.getAllAds());
     }
-
 
     @Operation(
             tags = "Объявления (AdsController)",
@@ -41,10 +49,12 @@ public class AdsController {
     )
     @PreAuthorize("hasAnyRole('ROLE_ADMIN','ROLE_USER')")
     @PostMapping
-    public ResponseEntity<Ads> addAds(@RequestBody CreateAds ads) {
-        return ResponseEntity.ok(advertService.createAds(ads));
+    public ResponseEntity<Ads> createAds(@RequestPart("properties") @Valid @NotNull @NotBlank CreateAds ads,
+                                         @RequestPart("image") @Valid @NotNull @NotBlank MultipartFile file) {
+        System.out.println("Create ads called");
+        Authentication authentication = SecurityContextHolder.getContext().getAuthentication();
+        return ResponseEntity.ok(advertService.createAds(ads, file, authentication));
     }
-
 
     @Operation(
             tags = "Объявления (AdsController)",
@@ -72,7 +82,7 @@ public class AdsController {
             summary = "Удаление объявления по id (removeAds)"
     )
     @PreAuthorize("hasAnyRole('ROLE_ADMIN','ROLE_USER')")
-    @DeleteMapping("{id}")
+    @DeleteMapping("/{id}")
     public ResponseEntity<Void> removeAds(@PathVariable int id) {
         Authentication authentication = SecurityContextHolder.getContext().getAuthentication();
         UserDetails userDetails = (UserDetails) authentication.getPrincipal();
@@ -86,7 +96,7 @@ public class AdsController {
             summary = "Получение объявления по id (getAds)"
     )
     @PreAuthorize("hasAnyRole('ROLE_ADMIN','ROLE_USER')")
-    @GetMapping("{id}")
+    @GetMapping("/{id}")
     public ResponseEntity<FullAds> getAds(@PathVariable int id) {
         return ResponseEntity.ok(advertService.getAds(id));
     }
@@ -98,10 +108,12 @@ public class AdsController {
     )
     @PreAuthorize("hasAnyRole('ROLE_ADMIN','ROLE_USER')")
     @PatchMapping("{id}")
-    public ResponseEntity<Ads> updateAds(@PathVariable int id, @RequestBody Ads ads) {
+    public ResponseEntity<Ads> updateAds(@PathVariable int id,
+                                         @RequestPart("properties") @Valid @NotNull @NotBlank Ads ads,
+                                         @RequestPart("image") @Valid @NotNull @NotBlank MultipartFile file) {
         Authentication authentication = SecurityContextHolder.getContext().getAuthentication();
         UserDetails userDetails = (UserDetails) authentication.getPrincipal();
-        return ResponseEntity.ok(advertService.updateAdvert(id, ads, authentication.getName(), userDetails));
+        return ResponseEntity.ok(advertService.updateAdvert(id, ads, authentication.getName(), userDetails, file));
     }
 
 
@@ -110,7 +122,7 @@ public class AdsController {
             summary = "Получение списка отзывов объявления (getAdsComments)"
     )
     @PreAuthorize("hasAnyRole('ROLE_ADMIN','ROLE_USER')")
-    @GetMapping("{ad_pk}/comment")
+    @GetMapping("{ad_pk}/comments")
     public ResponseEntity<ResponseWrapperAdsComment> getAdsComments(@PathVariable int ad_pk) {
         return ResponseEntity.ok(commentService.getAdsAllComments(ad_pk));
     }
@@ -121,7 +133,7 @@ public class AdsController {
             summary = "Добавление отзыва к объявлению (addAdsComment)"
     )
     @PreAuthorize("hasAnyRole('ROLE_ADMIN','ROLE_USER')")
-    @PostMapping("{ad_pk}/comment")
+    @PostMapping("{ad_pk}/comments")
     public ResponseEntity<AdsComment> addAdsComment(@PathVariable int ad_pk, @RequestBody AdsComment adsComment) {
         return ResponseEntity.ok(commentService.createComment(ad_pk, adsComment));
     }
@@ -132,7 +144,7 @@ public class AdsController {
             summary = "Удаление отзыва по id (deleteAdsComment)"
     )
     @PreAuthorize("hasAnyRole('ROLE_ADMIN','ROLE_USER')")
-    @DeleteMapping("{ad_pk}/comment/{id}")
+    @DeleteMapping("{ad_pk}/comments/{id}")
     public ResponseEntity<Void> deleteAdsComment(@PathVariable int ad_pk,
                                                     @PathVariable int id) {
         Authentication authentication = SecurityContextHolder.getContext().getAuthentication();
@@ -147,7 +159,7 @@ public class AdsController {
             summary = "Получение отзыва к объявлению по id (getAdsComment)"
     )
     @PreAuthorize("hasAnyRole('ROLE_ADMIN','ROLE_USER')")
-    @GetMapping("{ad_pk}/comment/{id}")
+    @GetMapping("{ad_pk}/comments/{id}")
     public ResponseEntity<AdsComment> getAdsComment(@PathVariable int ad_pk,
                                                  @PathVariable int id) {
         return ResponseEntity.ok(commentService.getAdsComment(ad_pk, id));
@@ -159,7 +171,7 @@ public class AdsController {
             summary = "Редактирование отзыва по id (updateAdsComment)"
     )
     @PreAuthorize("hasAnyRole('ROLE_ADMIN','ROLE_USER')")
-    @PatchMapping("{ad_pk}/comment/{id}")
+    @PatchMapping("{ad_pk}/comments/{id}")
     public ResponseEntity<AdsComment> updateAdsComment(@PathVariable int ad_pk,
                                                     @PathVariable int id,
                                                     @RequestBody AdsComment comment) {

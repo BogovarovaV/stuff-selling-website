@@ -9,8 +9,8 @@ import org.springframework.security.core.Authentication;
 import org.springframework.security.core.context.SecurityContextHolder;
 import org.springframework.web.bind.annotation.*;
 import ru.skypro.homework.dto.NewPassword;
-import ru.skypro.homework.dto.ResponseWrapperUser;
 import ru.skypro.homework.dto.User;
+import ru.skypro.homework.model.Users;
 import ru.skypro.homework.service.AuthService;
 import ru.skypro.homework.service.UserService;
 
@@ -37,8 +37,10 @@ public class UserController {
     )
     @GetMapping("/me")
     @PreAuthorize("hasRole('ROLE_ADMIN')")
-    public ResponseEntity<ResponseWrapperUser> getUsers() {
-        return ResponseEntity.ok(userService.getAllUsers());
+    public ResponseEntity<Users> getUser() {
+        Authentication authentication = SecurityContextHolder.getContext().getAuthentication();
+        Users users = userService.getUserByUsername(authentication.getName());
+        return ResponseEntity.ok(users);
     }
 
     @Operation(
