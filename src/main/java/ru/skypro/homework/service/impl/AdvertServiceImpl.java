@@ -13,7 +13,7 @@ import ru.skypro.homework.exception.NoAccessException;
 import ru.skypro.homework.exception.UserNotFoundException;
 import ru.skypro.homework.mapper.AdsMapper;
 import ru.skypro.homework.model.Advert;
-import ru.skypro.homework.model.Users;
+import ru.skypro.homework.model.User;
 import ru.skypro.homework.repository.AdvertRepository;
 import ru.skypro.homework.repository.UserRepository;
 import ru.skypro.homework.service.AdsAvatarService;
@@ -45,11 +45,10 @@ public class AdvertServiceImpl implements AdvertService {
     @Override
     public ResponseWrapperAds getAllAds() {
         System.out.println("Get all ads service called");
-        List<Ads> adsDtoList = adsMapper.advertEntitiesToAdsDtos(advertRepository.findAllAdverts());
+        List<Ads> adsDtoList = adsMapper.advertEntitiesToAdsDtos(advertRepository.findAll());
         ResponseWrapperAds responseWrapperAds = new ResponseWrapperAds();
         responseWrapperAds.setCount(adsDtoList.size());
         responseWrapperAds.setResults(adsDtoList);
-        System.out.println("Отпровлено" + adsDtoList.toString());
         return responseWrapperAds;
     }
 
@@ -62,12 +61,13 @@ public class AdvertServiceImpl implements AdvertService {
 
     @Override
     public Ads createAds(CreateAds createAdsDto, MultipartFile file, Authentication authentication) {
-        System.out.println("Create ads service called");
+        System.out.println("Create ads service called" + createAdsDto.toString());
         Advert createdAds = adsMapper.createAdsDtoToAdvertEntity(createAdsDto);
         System.out.println("dto" + createAdsDto.getDescription());
-        createdAds.setUsers(userRepository.findUsersByUsername(authentication.getName()).orElseThrow(UserNotFoundException::new));
+        createdAds.setUser(userRepository.findUsersByUsername(authentication.getName()).orElseThrow(UserNotFoundException::new));
         createdAds.setImage("/api/" + adsAvatarService.saveAds(file) + "/image");
         advertRepository.save(createdAds);
+        System.out.println(createdAds);
         return adsMapper.advertEntityToAdsDto(createdAds);
     }
 
@@ -82,7 +82,7 @@ public class AdvertServiceImpl implements AdvertService {
     public void removeAds(Integer id, String username, UserDetails userDetails) {
         Advert advert = advertRepository.findById(id).orElseThrow(AdvertNotFoundException::new);
         if (userDetails.getAuthorities().toString().contains("ROLE_ADMIN")
-                || username.equals(advert.getUsers().getUsername())) {
+                || username.equals(advert.getUser().getUsername())) {
             advertRepository.delete(advert);
         } else {
             throw new NoAccessException();
@@ -114,7 +114,7 @@ public class AdvertServiceImpl implements AdvertService {
     public Ads updateAdvert(Integer id, Ads adsDto, String username, UserDetails userDetails, MultipartFile file) {
         Advert advert = advertRepository.findById(id).orElseThrow(AdvertNotFoundException::new);
         if (userDetails.getAuthorities().toString().contains("ROLE_ADMIN")
-                || username.equals(advert.getUsers().getUsername())) {
+                || username.equals(advert.getUser().getUsername())) {
         //    advert.setUsers(userRepository.findUsersByUsername(username).orElseThrow(UserNotFoundException::new));
             advert.setImage(adsAvatarService.saveAds(file));
             advert.setPrice(adsDto.getPrice());
@@ -135,7 +135,7 @@ public class AdvertServiceImpl implements AdvertService {
      */
     @Override
     public ResponseWrapperAds findAds(String search) {
-        List<Ads> adsDtoList = adsMapper.advertEntitiesToAdsDtos(advertRepository.findAds(search));
+        List<Ads> adsDtoList = adsMapper.advertEntitiesToAdsDtos(advertRepository.findAllByTitleContainsIgnoreCase(search));
         ResponseWrapperAds responseWrapperAds = new ResponseWrapperAds();
         responseWrapperAds.setCount(adsDtoList.size());
         responseWrapperAds.setResults(adsDtoList);
@@ -151,8 +151,8 @@ public class AdvertServiceImpl implements AdvertService {
      */
     @Override
     public ResponseWrapperAds getAdsMe(String username) {
-        Users users = userRepository.findUsersByUsername(username).orElseThrow(UserNotFoundException::new);
-        List<Ads> adsDtoList = adsMapper.advertEntitiesToAdsDtos(advertRepository.findAdsByUsersId(users.getId()));
+        User user = userRepository.findUsersByUsername(username).orElseThrow(UserNotFoundException::new);
+        List<Ads> adsDtoList = adsMapper.advertEntitiesToAdsDtos(advertRepository.findAllByUserId(user.getId()));
         ResponseWrapperAds responseWrapperAds = new ResponseWrapperAds();
         responseWrapperAds.setCount(adsDtoList.size());
         responseWrapperAds.setResults(adsDtoList);

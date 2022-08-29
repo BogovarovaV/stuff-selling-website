@@ -5,18 +5,18 @@ import lombok.Data;
 import javax.validation.constraints.*;
 
 @Data
-public class RegisterReq {
-    @Email
-    private String username;
-    @Size(min = 8)
-    private String password;
-    @NotBlank
+public class UserDto {
+    @Positive
+    @NotNull
+    private int id;
     @Size(min = 3)
+    @NotBlank
     private String firstName;
-    @NotBlank
     @Size(min = 3)
+    @NotBlank
     private String lastName;
+    @Email
+    private String email;
     @Pattern(regexp = "^(\\+7|7|8)?[\\s\\-]?\\(?[489][0-9]{2}\\)?[\\s\\-]?[0-9]{3}[\\s\\-]?[0-9]{2}[\\s\\-]?[0-9]{2}$")
     private String phone;
-    private Role role;
 }

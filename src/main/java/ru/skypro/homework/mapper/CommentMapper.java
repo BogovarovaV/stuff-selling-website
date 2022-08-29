@@ -11,7 +11,7 @@ import java.util.List;
 public interface CommentMapper {
 
     @Mapping(source = "id", target = "pk")
-    @Mapping(source = "users.id", target = "author")
+    @Mapping(source = "user.id", target = "author")
     AdsComment commentEntityToAdsCommentDto(Comment comment);
 
     @Mapping(source = "pk", target = "id")

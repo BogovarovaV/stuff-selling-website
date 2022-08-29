@@ -26,7 +26,7 @@ public class Advert {
     private String description;
 
     @ManyToOne
-    private Users users;
+    private User user;
     //    private Integer author;
 
     @OneToMany
