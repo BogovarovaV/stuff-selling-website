@@ -1,7 +1,5 @@
 package ru.skypro.homework;
 
-import ru.skypro.homework.model.Users;
-
 import java.time.OffsetDateTime;
 
 public interface DataTest {

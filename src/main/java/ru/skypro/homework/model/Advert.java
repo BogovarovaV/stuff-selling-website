@@ -21,11 +21,12 @@ public class Advert {
 
     private Integer price;
     private String title;
+
     private String image;
     private String description;
 
     @ManyToOne
-    private Users users;
+    private User user;
     //    private Integer author;
 
     @OneToMany

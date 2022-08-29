@@ -12,17 +12,17 @@ import java.util.List;
 @Mapper(componentModel = "spring")
 public interface AdsMapper {
 
-    @Mapping(source = "pk", target = "id")
+    @Mapping(target = "image", ignore = true)
     Advert createAdsDtoToAdvertEntity(CreateAds createAdsDto);
 
     @Mapping(source = "id", target = "pk")
-    @Mapping(source = "users.id", target = "author")
+    @Mapping(source = "user.id", target = "author")
     Ads advertEntityToAdsDto(Advert advert);
 
-    @Mapping(source = "users.firstName", target = "authorFirstName")
-    @Mapping(source = "users.lastName", target = "authorLastName")
-    @Mapping(source = "users.email", target = "email")
-    @Mapping(source = "users.phone", target = "phone")
+    @Mapping(source = "user.firstName", target = "authorFirstName")
+    @Mapping(source = "user.lastName", target = "authorLastName")
+    @Mapping(source = "user.email", target = "email")
+    @Mapping(source = "user.phone", target = "phone")
     @Mapping(source = "id", target = "pk")
     FullAds advertEntityToFullAdsDto(Advert advert);
 

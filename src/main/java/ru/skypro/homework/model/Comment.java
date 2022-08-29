@@ -22,7 +22,7 @@ public class Comment {
     private String text;
 
     @ManyToOne
-    private Users users;
+    private User user;
 //    private Integer author;
 
     @ManyToOne

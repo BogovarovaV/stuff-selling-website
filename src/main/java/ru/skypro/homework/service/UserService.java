@@ -1,20 +1,20 @@
 package ru.skypro.homework.service;
 
 import ru.skypro.homework.dto.ResponseWrapperUser;
-import ru.skypro.homework.dto.User;
-import ru.skypro.homework.model.Users;
+import ru.skypro.homework.dto.UserDto;
+import ru.skypro.homework.model.User;
 
 public interface UserService {
 
-    ResponseWrapperUser getAllUsers();
+    ResponseWrapperUser getAllUsersWithOrderById();
 
-    User updateUser(User userDto, String username);
+    UserDto updateUser(UserDto userDto, String username);
 
-    User getUser(Integer id);
+    UserDto getUser(Integer id);
 
-    Users getUserByUsername(String username);
+    User getUserByUsername(String username);
 
-    Users updateUser(Users users);
+    User updateUser(User user);
 
     void savePassword(String username, String newPassword);
 }

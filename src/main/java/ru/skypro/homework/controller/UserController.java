@@ -7,17 +7,23 @@ import org.springframework.http.ResponseEntity;
 import org.springframework.security.access.prepost.PreAuthorize;
 import org.springframework.security.core.Authentication;
 import org.springframework.security.core.context.SecurityContextHolder;
+import org.springframework.validation.annotation.Validated;
 import org.springframework.web.bind.annotation.*;
 import ru.skypro.homework.dto.NewPassword;
 import ru.skypro.homework.dto.ResponseWrapperUser;
-import ru.skypro.homework.dto.User;
+import ru.skypro.homework.dto.UserDto;
+import ru.skypro.homework.model.User;
 import ru.skypro.homework.service.AuthService;
 import ru.skypro.homework.service.UserService;
+
+import javax.validation.Valid;
+import javax.validation.constraints.Positive;
 
 
 @CrossOrigin(value = "http://localhost:3000")
 @RestController
 @RequestMapping("/users")
+@Validated
 public class UserController {
 
     private final Logger logger = LoggerFactory.getLogger(UserController.class);
@@ -36,9 +42,11 @@ public class UserController {
             summary = "Получение пользователей (getUsers)"
     )
     @GetMapping("/me")
-    @PreAuthorize("hasRole('ROLE_ADMIN')")
-    public ResponseEntity<ResponseWrapperUser> getUsers() {
-        return ResponseEntity.ok(userService.getAllUsers());
+    @PreAuthorize("hasAnyRole('ROLE_ADMIN','ROLE_USER')")
+    public ResponseEntity<User> getCurrentUser() {
+        Authentication authentication = SecurityContextHolder.getContext().getAuthentication();
+        User user = userService.getUserByUsername(authentication.getName());
+        return ResponseEntity.ok(user);
     }
 
     @Operation(
@@ -47,9 +55,9 @@ public class UserController {
     )
     @PreAuthorize("hasAnyRole('ROLE_ADMIN','ROLE_USER')")
     @PatchMapping("/me")
-    public ResponseEntity<User> updateUser(@RequestBody User user) {
+    public ResponseEntity<UserDto> updateUser(@Valid @RequestBody UserDto userDto) {
         Authentication authentication = SecurityContextHolder.getContext().getAuthentication();
-        return ResponseEntity.ok(userService.updateUser(user, authentication.getName()));
+        return ResponseEntity.ok(userService.updateUser(userDto, authentication.getName()));
     }
 
     @Operation(
@@ -58,7 +66,7 @@ public class UserController {
     )
     @PreAuthorize("hasAnyRole('ROLE_ADMIN','ROLE_USER')")
     @PostMapping("set_password")
-    public ResponseEntity<NewPassword> setPassword(@RequestBody NewPassword newPassword) {
+    public ResponseEntity<NewPassword> setPassword(@Valid @RequestBody NewPassword newPassword) {
         Authentication authentication = SecurityContextHolder.getContext().getAuthentication();
         authService.changePassword(
                 authentication.getName(),
@@ -74,7 +82,17 @@ public class UserController {
     )
     @PreAuthorize("hasRole('ROLE_ADMIN')")
     @GetMapping("{id}")
-    public ResponseEntity<User> getUser(@PathVariable("id") int id) {
+    public ResponseEntity<UserDto> getAnyUser(@Positive @PathVariable("id") int id) {
         return ResponseEntity.ok(userService.getUser(id));
+    }
+
+    @Operation(
+            tags = "Пользователи (UserController)",
+            summary = "Получение всех пользователей с сортировкой по id (getAllUsersWithOrderById)"
+    )
+    @PreAuthorize("hasRole('ROLE_ADMIN')")
+    @GetMapping("/")
+    public ResponseEntity<ResponseWrapperUser> getAllUsersWithOrderById() {
+        return ResponseEntity.ok(userService.getAllUsersWithOrderById());
     }
 }

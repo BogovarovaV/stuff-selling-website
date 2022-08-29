@@ -11,7 +11,7 @@ import ru.skypro.homework.exception.UserNotFoundException;
 import ru.skypro.homework.mapper.CommentMapper;
 import ru.skypro.homework.model.Advert;
 import ru.skypro.homework.model.Comment;
-import ru.skypro.homework.model.Users;
+import ru.skypro.homework.model.User;
 import ru.skypro.homework.repository.AdvertRepository;
 import ru.skypro.homework.repository.CommentRepository;
 import ru.skypro.homework.repository.UserRepository;
@@ -43,7 +43,7 @@ public class CommentServiceImpl implements CommentService {
     @Override
     public AdsComment createComment(Integer adsId, AdsComment adsCommentDto) {
         Comment createdComment = commentMapper.adsCommentDtoToCommentEntity(adsCommentDto);
-        createdComment.setUsers(userRepository.findById(adsCommentDto.getAuthor()).orElseThrow(UserNotFoundException::new));
+        createdComment.setUser(userRepository.findById(adsCommentDto.getAuthor()).orElseThrow(UserNotFoundException::new));
         createdComment.setAds(advertRepository.findById(adsId).orElseThrow(AdvertNotFoundException::new));
         commentRepository.save(createdComment);
         return adsCommentDto;
@@ -58,11 +58,11 @@ public class CommentServiceImpl implements CommentService {
      */
     @Override
     public void deleteAdsComment(Integer adsId, Integer id, String username, UserDetails userDetails) {
-        Comment comment = commentRepository.findAdsComment(adsId, id).orElseThrow(CommentNotFoundException::new);
+        Comment comment = commentRepository.findCommentById(id).orElseThrow(CommentNotFoundException::new);
         Advert advert = advertRepository.findById(adsId).orElseThrow(AdvertNotFoundException::new);
-        Users users = userRepository.getById(advert.getUsers().getId());
+        User user = userRepository.getById(advert.getUser().getId());
         if (userDetails.getAuthorities().toString().contains("ROLE_ADMIN")
-                || username.equals(users.getUsername())) {
+                || username.equals(user.getUsername())) {
             commentRepository.delete(comment);
         } else {
             throw new NoAccessException();
@@ -92,7 +92,7 @@ public class CommentServiceImpl implements CommentService {
      */
     @Override
     public AdsComment getAdsComment(Integer adsId, Integer id) {
-        Comment comment = commentRepository.findAdsComment(adsId, id).orElseThrow(CommentNotFoundException::new);
+        Comment comment = commentRepository.findCommentById(id).orElseThrow(CommentNotFoundException::new);
         return commentMapper.commentEntityToAdsCommentDto(comment);
     }
 
@@ -107,11 +107,11 @@ public class CommentServiceImpl implements CommentService {
      */
     @Override
     public AdsComment updateAdsComment(Integer adsId, Integer id, AdsComment adsCommentDto, String username, UserDetails userDetails) {
-        Comment comment = commentRepository.findAdsComment(adsId, id).orElseThrow(CommentNotFoundException::new);
+        Comment comment = commentRepository.findCommentById(id).orElseThrow(CommentNotFoundException::new);
         Advert advert = advertRepository.findById(adsId).orElseThrow(AdvertNotFoundException::new);
-        Users users = userRepository.getById(advert.getUsers().getId());
+        User user = userRepository.getById(advert.getUser().getId());
         if (userDetails.getAuthorities().toString().contains("ROLE_ADMIN")
-                || username.equals(users.getUsername())) {
+                || username.equals(user.getUsername())) {
             comment.setCreatedAt(adsCommentDto.getCreatedAt());
             comment.setText(adsCommentDto.getText());
             commentRepository.save(comment);
