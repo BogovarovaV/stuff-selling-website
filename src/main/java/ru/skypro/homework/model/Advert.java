@@ -17,8 +17,6 @@ public class Advert {
     @GeneratedValue(strategy = GenerationType.IDENTITY)
     private Integer id;
 
-    //    private Integer pk;
-
     private Integer price;
     private String title;
 
@@ -27,7 +25,6 @@ public class Advert {
 
     @ManyToOne
     private User user;
-    //    private Integer author;
 
     @OneToMany
     private List<Comment> commentList;

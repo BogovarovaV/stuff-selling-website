@@ -79,8 +79,8 @@ public class AuthServiceImpl implements AuthService {
      */
     @Override
     public void changePassword(String username, String currentPassword, String newPassword) {
-        UserDetails userDetails = manager.loadUserByUsername(username);
-        String encryptedPassword = userDetails.getPassword();
+        UserDetails currentUserDetails = manager.loadUserByUsername(username);
+        String encryptedPassword = currentUserDetails.getPassword();
         String encryptedPasswordWithoutEncryptionType = encryptedPassword.substring(8);
         if (encoder.matches(currentPassword, encryptedPasswordWithoutEncryptionType)) {
             userService.savePassword(username, "{bcrypt}" + encoder.encode(newPassword));

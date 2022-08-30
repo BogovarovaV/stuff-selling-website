@@ -2,15 +2,18 @@ package ru.skypro.homework.service.impl;
 
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
+import org.springframework.security.core.Authentication;
+import org.springframework.security.core.userdetails.UserDetails;
 import org.springframework.stereotype.Service;
-import org.springframework.validation.annotation.Validated;
 import ru.skypro.homework.dto.ResponseWrapperUser;
 import ru.skypro.homework.dto.UserDto;
+import ru.skypro.homework.exception.NoAccessException;
 import ru.skypro.homework.exception.UserNotFoundException;
 import ru.skypro.homework.mapper.UserMapper;
 import ru.skypro.homework.model.User;
 import ru.skypro.homework.repository.UserRepository;
 import ru.skypro.homework.service.UserService;
+
 import java.util.List;
 
 @Service
@@ -42,18 +45,27 @@ public class UserServiceImpl implements UserService {
 
     /**
      * Update user by username
-     * @param userDto - user information
-     * @param username - username
+     *
+     * @param userDto        - user information
+     * @param authentication - user's authentication
      * @return updated user as User (DTO)
      */
     @Override
-    public UserDto updateUser(UserDto userDto, String username) {
-        User user = userRepository.findUsersByUsername(username).orElseThrow(UserNotFoundException::new);
-        user.setFirstName(userDto.getFirstName());
-        user.setLastName(userDto.getLastName());
-        user.setPhone(userDto.getPhone());
-        userRepository.save(user);
-        logger.info("User {} has been updated", user.getUsername());
+    public UserDto updateUser(UserDto userDto, Authentication authentication) {
+        String currentUsername = authentication.getName();
+        UserDetails currentUserDetails = (UserDetails) authentication.getPrincipal();
+        User user = userRepository.findById(userDto.getId()).orElseThrow(UserNotFoundException::new);
+        // check if user has access to change data (has role "Admin" or user wants to change his own data)
+        if (currentUserDetails.getAuthorities().toString().contains("ROLE_ADMIN")
+                || currentUsername.equals(user.getUsername())) {
+            user.setFirstName(userDto.getFirstName());
+            user.setLastName(userDto.getLastName());
+            user.setPhone(userDto.getPhone());
+            userRepository.save(user);
+            logger.info("User {} has been updated", user.getUsername());
+        } else {
+            throw new NoAccessException();
+        }
         return userDto;
     }
 

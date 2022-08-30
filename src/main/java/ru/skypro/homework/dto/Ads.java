@@ -17,6 +17,7 @@ public class Ads {
   @Positive
   private Integer price;
   @NotBlank
+  @Size(min = 3)
   private String title;
   @Size(min = 8)
   @NotBlank

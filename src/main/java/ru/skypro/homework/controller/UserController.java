@@ -1,8 +1,6 @@
 package ru.skypro.homework.controller;
 
 import io.swagger.v3.oas.annotations.Operation;
-import org.slf4j.Logger;
-import org.slf4j.LoggerFactory;
 import org.springframework.http.ResponseEntity;
 import org.springframework.security.access.prepost.PreAuthorize;
 import org.springframework.security.core.Authentication;
@@ -25,8 +23,6 @@ import javax.validation.constraints.Positive;
 @RequestMapping("/users")
 @Validated
 public class UserController {
-
-    private final Logger logger = LoggerFactory.getLogger(UserController.class);
 
     private final UserService userService;
 
@@ -57,7 +53,7 @@ public class UserController {
     @PatchMapping("/me")
     public ResponseEntity<UserDto> updateUser(@Valid @RequestBody UserDto userDto) {
         Authentication authentication = SecurityContextHolder.getContext().getAuthentication();
-        return ResponseEntity.ok(userService.updateUser(userDto, authentication.getName()));
+        return ResponseEntity.ok(userService.updateUser(userDto, authentication));
     }
 
     @Operation(

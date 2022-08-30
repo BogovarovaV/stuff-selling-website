@@ -24,7 +24,6 @@ public class AdsAvatarServiceImpl implements AdsAvatarService {
         System.out.println("Save ads service was called");
         AdsAvatar adsAvatar = new AdsAvatar();
         try {
-            // код, который кладет картинку в entity
             byte[] bytes = file.getBytes();
             adsAvatar.setImage(bytes);
         } catch (
@@ -32,7 +31,6 @@ public class AdsAvatarServiceImpl implements AdsAvatarService {
             throw new RuntimeException(e);
         }
         adsAvatar.setId(UUID.randomUUID().toString());
-        // код сохранения картинки в БД
         AdsAvatar savedAdsAvatar = adsAvatarRepository.saveAndFlush(adsAvatar);
         return savedAdsAvatar.getId();
     }
