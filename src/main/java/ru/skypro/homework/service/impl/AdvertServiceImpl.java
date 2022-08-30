@@ -4,10 +4,10 @@ import org.springframework.security.core.Authentication;
 import org.springframework.security.core.userdetails.UserDetails;
 import org.springframework.stereotype.Service;
 import org.springframework.web.multipart.MultipartFile;
-import ru.skypro.homework.dto.Ads;
-import ru.skypro.homework.dto.CreateAds;
-import ru.skypro.homework.dto.FullAds;
-import ru.skypro.homework.dto.ResponseWrapperAds;
+import ru.skypro.homework.dto.AdsTo;
+import ru.skypro.homework.dto.CreateAdsTo;
+import ru.skypro.homework.dto.FullAdsTo;
+import ru.skypro.homework.dto.ResponseWrapperAdsTo;
 import ru.skypro.homework.exception.AdvertNotFoundException;
 import ru.skypro.homework.exception.NoAccessException;
 import ru.skypro.homework.exception.UserNotFoundException;
@@ -40,13 +40,13 @@ public class AdvertServiceImpl implements AdvertService {
     /**
      * Get a list of all adverts
      *
-     * @return list as ResponseWrapperAds (DTO)
+     * @return list as ResponseWrapperAdsTo (DTO)
      */
     @Override
-    public ResponseWrapperAds getAllAds() {
+    public ResponseWrapperAdsTo getAllAds() {
         System.out.println("Get all ads service called");
-        List<Ads> adsDtoList = adsMapper.advertEntitiesToAdsDtos(advertRepository.findAll());
-        ResponseWrapperAds responseWrapperAds = new ResponseWrapperAds();
+        List<AdsTo> adsDtoList = adsMapper.advertEntitiesToAdsDtos(advertRepository.findAll());
+        ResponseWrapperAdsTo responseWrapperAds = new ResponseWrapperAdsTo();
         responseWrapperAds.setCount(adsDtoList.size());
         responseWrapperAds.setResults(adsDtoList);
         return responseWrapperAds;
@@ -56,11 +56,11 @@ public class AdvertServiceImpl implements AdvertService {
      * Create advert
      * // * @param createAdsDto - advert from client
      *
-     * @return created advert as Ads (DTO)
+     * @return created advert as AdsTo (DTO)
      */
 
     @Override
-    public Ads createAds(CreateAds createAdsDto, MultipartFile file, Authentication authentication) {
+    public AdsTo createAds(CreateAdsTo createAdsDto, MultipartFile file, Authentication authentication) {
         Advert createdAds = adsMapper.createAdsDtoToAdvertEntity(createAdsDto);
         createdAds.setUser(userRepository.findUsersByUsername(authentication.getName()).orElseThrow(UserNotFoundException::new));
         createdAds.setImage("/api/" + adsAvatarService.saveAds(file) + "/image");
@@ -91,10 +91,10 @@ public class AdvertServiceImpl implements AdvertService {
      * Get advert by ID
      *
      * @param id - advert ID
-     * @return found advert as FullAds (DTO)
+     * @return found advert as FullAdsTo (DTO)
      */
     @Override
-    public FullAds getAds(Integer id) {
+    public FullAdsTo getAds(Integer id) {
         Advert advert = advertRepository.findById(id).orElseThrow(AdvertNotFoundException::new);
         return adsMapper.advertEntityToFullAdsDto(advert);
     }
@@ -103,13 +103,13 @@ public class AdvertServiceImpl implements AdvertService {
      * Update advert by ID
      *
      * @param id          - advert ID
-     * @param adsDto      - advert information as Ads (DTO) from client
+     * @param adsDto      - advert information as AdsTo (DTO) from client
      * @param username    - username from client
      * @param userDetails - user details from client
-     * @return updated advert as Ads (DTO) or throw exception
+     * @return updated advert as AdsTo (DTO) or throw exception
      */
     @Override
-    public Ads updateAdvert(Integer id, Ads adsDto, String username, UserDetails userDetails, MultipartFile file) {
+    public AdsTo updateAdvert(Integer id, AdsTo adsDto, String username, UserDetails userDetails, MultipartFile file) {
         Advert advert = advertRepository.findById(id).orElseThrow(AdvertNotFoundException::new);
         // check if user has access to change advert (has role "Admin" or user wants to change his own advert)
         if (userDetails.getAuthorities().toString().contains("ROLE_ADMIN")
@@ -129,12 +129,12 @@ public class AdvertServiceImpl implements AdvertService {
      * Find adverts by keyword(s)
      *
      * @param search - keyword(s) from client
-     * @return list of adverts finding by keyword(s) as ResponseWrapperAds (DTO)
+     * @return list of adverts finding by keyword(s) as ResponseWrapperAdsTo (DTO)
      */
     @Override
-    public ResponseWrapperAds findAds(String search) {
-        List<Ads> adsDtoList = adsMapper.advertEntitiesToAdsDtos(advertRepository.findAllByTitleContainsIgnoreCase(search));
-        ResponseWrapperAds responseWrapperAds = new ResponseWrapperAds();
+    public ResponseWrapperAdsTo findAds(String search) {
+        List<AdsTo> adsDtoList = adsMapper.advertEntitiesToAdsDtos(advertRepository.findAllByTitleContainsIgnoreCase(search));
+        ResponseWrapperAdsTo responseWrapperAds = new ResponseWrapperAdsTo();
         responseWrapperAds.setCount(adsDtoList.size());
         responseWrapperAds.setResults(adsDtoList);
         return responseWrapperAds;
@@ -145,15 +145,15 @@ public class AdvertServiceImpl implements AdvertService {
      *
      * @param username - username from client
      * @return list of finding adverts of a specific user
-     * as ResponseWrapperAds (DTO)
+     * as ResponseWrapperAdsTo (DTO)
      */
     @Override
-    public ResponseWrapperAds getAdsMe(String username) {
+    public ResponseWrapperAdsTo getAdsMe(String username) {
         User user = userRepository.findUsersByUsername(username).orElseThrow(UserNotFoundException::new);
-        List<Ads> adsDtoList = adsMapper.advertEntitiesToAdsDtos(advertRepository.findAllByUserId(user.getId()));
-        ResponseWrapperAds responseWrapperAds = new ResponseWrapperAds();
-        responseWrapperAds.setCount(adsDtoList.size());
-        responseWrapperAds.setResults(adsDtoList);
-        return responseWrapperAds;
+        List<AdsTo> adsDtoList = adsMapper.advertEntitiesToAdsDtos(advertRepository.findAllByUserId(user.getId()));
+        ResponseWrapperAdsTo responseWrapperAdsTo = new ResponseWrapperAdsTo();
+        responseWrapperAdsTo.setCount(adsDtoList.size());
+        responseWrapperAdsTo.setResults(adsDtoList);
+        return responseWrapperAdsTo;
     }
 }

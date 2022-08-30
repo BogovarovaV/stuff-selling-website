@@ -8,7 +8,7 @@ import javax.validation.constraints.Pattern;
 import javax.validation.constraints.Size;
 
 @Data
-public class RegisterReq {
+public class RegisterReqTo {
     @Email
     private String username;
     @Size(min = 8)
@@ -21,5 +21,5 @@ public class RegisterReq {
     private String lastName;
     @Pattern(regexp = "^(\\+7|7|8)?[\\s\\-]?\\(?[489][0-9]{2}\\)?[\\s\\-]?[0-9]{3}[\\s\\-]?[0-9]{2}[\\s\\-]?[0-9]{2}$")
     private String phone;
-    private Role role;
+    private RoleTo role;
 }

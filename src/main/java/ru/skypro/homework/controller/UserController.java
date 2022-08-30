@@ -7,9 +7,9 @@ import org.springframework.security.core.Authentication;
 import org.springframework.security.core.context.SecurityContextHolder;
 import org.springframework.validation.annotation.Validated;
 import org.springframework.web.bind.annotation.*;
-import ru.skypro.homework.dto.NewPassword;
-import ru.skypro.homework.dto.ResponseWrapperUser;
-import ru.skypro.homework.dto.UserDto;
+import ru.skypro.homework.dto.NewPasswordTo;
+import ru.skypro.homework.dto.ResponseWrapperUserTo;
+import ru.skypro.homework.dto.UserTo;
 import ru.skypro.homework.model.User;
 import ru.skypro.homework.service.AuthService;
 import ru.skypro.homework.service.UserService;
@@ -51,9 +51,9 @@ public class UserController {
     )
     @PreAuthorize("hasAnyRole('ROLE_ADMIN','ROLE_USER')")
     @PatchMapping("/me")
-    public ResponseEntity<UserDto> updateUser(@Valid @RequestBody UserDto userDto) {
+    public ResponseEntity<UserTo> updateUser(@Valid @RequestBody UserTo userTo) {
         Authentication authentication = SecurityContextHolder.getContext().getAuthentication();
-        return ResponseEntity.ok(userService.updateUser(userDto, authentication));
+        return ResponseEntity.ok(userService.updateUser(userTo, authentication));
     }
 
     @Operation(
@@ -62,14 +62,14 @@ public class UserController {
     )
     @PreAuthorize("hasAnyRole('ROLE_ADMIN','ROLE_USER')")
     @PostMapping("set_password")
-    public ResponseEntity<NewPassword> setPassword(@Valid @RequestBody NewPassword newPassword) {
+    public ResponseEntity<NewPasswordTo> setPassword(@Valid @RequestBody NewPasswordTo newPasswordTo) {
         Authentication authentication = SecurityContextHolder.getContext().getAuthentication();
         authService.changePassword(
                 authentication.getName(),
-                newPassword.getCurrentPassword(),
-                newPassword.getNewPassword()
+                newPasswordTo.getCurrentPassword(),
+                newPasswordTo.getNewPassword()
         );
-        return ResponseEntity.ok(newPassword);
+        return ResponseEntity.ok(newPasswordTo);
     }
 
     @Operation(
@@ -78,7 +78,7 @@ public class UserController {
     )
     @PreAuthorize("hasRole('ROLE_ADMIN')")
     @GetMapping("{id}")
-    public ResponseEntity<UserDto> getAnyUser(@Positive @PathVariable("id") int id) {
+    public ResponseEntity<UserTo> getAnyUser(@Positive @PathVariable("id") int id) {
         return ResponseEntity.ok(userService.getUser(id));
     }
 
@@ -88,7 +88,7 @@ public class UserController {
     )
     @PreAuthorize("hasRole('ROLE_ADMIN')")
     @GetMapping("/")
-    public ResponseEntity<ResponseWrapperUser> getAllUsersWithOrderById() {
+    public ResponseEntity<ResponseWrapperUserTo> getAllUsersWithOrderById() {
         return ResponseEntity.ok(userService.getAllUsersWithOrderById());
     }
 }

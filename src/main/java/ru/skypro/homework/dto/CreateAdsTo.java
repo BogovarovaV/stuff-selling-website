@@ -7,19 +7,13 @@ import javax.validation.constraints.Positive;
 import javax.validation.constraints.Size;
 
 @Data
-public class Ads {
-  @Positive
-  private Integer author;
+public class CreateAdsTo {
 
-  private String image;
-  @Positive
-  private Integer pk;
+  @NotBlank
+  private String description;
   @Positive
   private Integer price;
   @NotBlank
   @Size(min = 3)
   private String title;
-  @Size(min = 8)
-  @NotBlank
-  private String description;
 }
