@@ -5,8 +5,8 @@ import org.slf4j.LoggerFactory;
 import org.springframework.security.core.Authentication;
 import org.springframework.security.core.userdetails.UserDetails;
 import org.springframework.stereotype.Service;
-import ru.skypro.homework.dto.ResponseWrapperUser;
-import ru.skypro.homework.dto.UserDto;
+import ru.skypro.homework.dto.ResponseWrapperUserTo;
+import ru.skypro.homework.dto.UserTo;
 import ru.skypro.homework.exception.NoAccessException;
 import ru.skypro.homework.exception.UserNotFoundException;
 import ru.skypro.homework.mapper.UserMapper;
@@ -32,15 +32,15 @@ public class UserServiceImpl implements UserService {
 
     /**
      * Get a list of all users
-     * @return list of all users as ResponseWrapperUser (DTO)
+     * @return list of all users as ResponseWrapperUserTo (DTO)
      */
     @Override
-    public ResponseWrapperUser getAllUsersWithOrderById() {
-        List<UserDto> userDtoDtoList = userMapper.usersEntitiesToUserDtos(userRepository.findAllByOrderById());
-        ResponseWrapperUser responseWrapperUser = new ResponseWrapperUser();
-        responseWrapperUser.setCount(userDtoDtoList.size());
-        responseWrapperUser.setResults(userDtoDtoList);
-        return responseWrapperUser;
+    public ResponseWrapperUserTo getAllUsersWithOrderById() {
+        List<UserTo> userDtoDtoList = userMapper.usersEntitiesToUserDtos(userRepository.findAllByOrderById());
+        ResponseWrapperUserTo responseWrapperUserTo = new ResponseWrapperUserTo();
+        responseWrapperUserTo.setCount(userDtoDtoList.size());
+        responseWrapperUserTo.setResults(userDtoDtoList);
+        return responseWrapperUserTo;
     }
 
     /**
@@ -51,7 +51,7 @@ public class UserServiceImpl implements UserService {
      * @return updated user as User (DTO)
      */
     @Override
-    public UserDto updateUser(UserDto userDto, Authentication authentication) {
+    public UserTo updateUser(UserTo userDto, Authentication authentication) {
         String currentUsername = authentication.getName();
         UserDetails currentUserDetails = (UserDetails) authentication.getPrincipal();
         User user = userRepository.findById(userDto.getId()).orElseThrow(UserNotFoundException::new);
@@ -75,7 +75,7 @@ public class UserServiceImpl implements UserService {
      * @return found user as User (DTO)
      */
     @Override
-    public UserDto getUser(Integer id) {
+    public UserTo getUser(Integer id) {
         User user = userRepository.findById(id).orElseThrow(UserNotFoundException::new);
         return userMapper.usersEntityToUserDto(user);
     }

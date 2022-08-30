@@ -10,14 +10,14 @@ import org.springframework.web.bind.annotation.CrossOrigin;
 import org.springframework.web.bind.annotation.PostMapping;
 import org.springframework.web.bind.annotation.RequestBody;
 import org.springframework.web.bind.annotation.RestController;
-import ru.skypro.homework.dto.LoginReq;
-import ru.skypro.homework.dto.RegisterReq;
-import ru.skypro.homework.dto.Role;
+import ru.skypro.homework.dto.LoginReqTo;
+import ru.skypro.homework.dto.RegisterReqTo;
+import ru.skypro.homework.dto.RoleTo;
 import ru.skypro.homework.service.AuthService;
 
 import javax.validation.Valid;
 
-import static ru.skypro.homework.dto.Role.USER;
+import static ru.skypro.homework.dto.RoleTo.USER;
 
 @Slf4j
 @CrossOrigin(value = "http://localhost:3000")
@@ -33,7 +33,7 @@ public class AuthController {
             summary = "Вход (login)"
     )
     @PostMapping("/login")
-    public ResponseEntity<?> login(@Valid @RequestBody LoginReq req) {
+    public ResponseEntity<?> login(@Valid @RequestBody LoginReqTo req) {
         if (authService.login(req.getUsername(), req.getPassword())) {
             System.out.println("Login");
             return ResponseEntity.ok().build();
@@ -48,8 +48,8 @@ public class AuthController {
             summary = "Регистрация (register)"
     )
     @PostMapping("/register")
-    public ResponseEntity<?> register(@Valid @RequestBody RegisterReq req) {
-        Role role = req.getRole() == null ? USER : req.getRole();
+    public ResponseEntity<?> register(@Valid @RequestBody RegisterReqTo req) {
+        RoleTo role = req.getRole() == null ? USER : req.getRole();
         if (authService.register(req, role)) {
             return ResponseEntity.ok().build();
         } else {

@@ -1,19 +1,19 @@
 package ru.skypro.homework.service;
 
 import org.springframework.security.core.userdetails.UserDetails;
-import ru.skypro.homework.dto.AdsComment;
-import ru.skypro.homework.dto.ResponseWrapperAdsComment;
+import ru.skypro.homework.dto.AdsCommentTo;
+import ru.skypro.homework.dto.ResponseWrapperAdsCommentTo;
 
 public interface CommentService {
 
-    AdsComment createComment(Integer adsId, AdsComment adsCommentDto);
+    AdsCommentTo createComment(Integer adsId, AdsCommentTo adsCommentDto);
 
-    AdsComment getAdsComment(Integer adsId, Integer id);
+    AdsCommentTo getAdsComment(Integer adsId, Integer id);
 
-    ResponseWrapperAdsComment getAdsAllComments(Integer adsId);
+    ResponseWrapperAdsCommentTo getAdsAllComments(Integer adsId);
 
     void deleteAdsComment(Integer adsId, Integer id, String username, UserDetails userDetails);
 
-    AdsComment updateAdsComment(Integer adsId, Integer id, AdsComment adsCommentDto, String username, UserDetails userDetails);
+    AdsCommentTo updateAdsComment(Integer adsId, Integer id, AdsCommentTo adsCommentDto, String username, UserDetails userDetails);
 
 }

@@ -5,7 +5,7 @@ import lombok.Data;
 import javax.validation.constraints.*;
 
 @Data
-public class UserDto {
+public class UserTo {
     @Positive
     @NotNull
     private int id;

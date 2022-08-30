@@ -20,6 +20,7 @@ public class Advert {
     private Integer price;
     private String title;
 
+    @Lob
     private String image;
     private String description;
 

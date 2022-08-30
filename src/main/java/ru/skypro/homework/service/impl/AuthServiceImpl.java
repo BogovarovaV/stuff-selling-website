@@ -5,8 +5,8 @@ import org.springframework.security.crypto.bcrypt.BCryptPasswordEncoder;
 import org.springframework.security.crypto.password.PasswordEncoder;
 import org.springframework.security.provisioning.UserDetailsManager;
 import org.springframework.stereotype.Service;
-import ru.skypro.homework.dto.RegisterReq;
-import ru.skypro.homework.dto.Role;
+import ru.skypro.homework.dto.RegisterReqTo;
+import ru.skypro.homework.dto.RoleTo;
 import ru.skypro.homework.exception.NoAccessException;
 import ru.skypro.homework.model.User;
 import ru.skypro.homework.service.AuthService;
@@ -46,27 +46,27 @@ public class AuthServiceImpl implements AuthService {
 
     /**
      * New user registration
-     * @param registerReq - new user information as RegisterReq (DTO) from client
-     * @param role - user role
+     * @param registerReqTo - new user information as RegisterReqTo (DTO) from client
+     * @param roleTo - user roleTo
      * @return boolean result of registration
      */
     @Override
-    public boolean register(RegisterReq registerReq, Role role) {
-        if (manager.userExists(registerReq.getUsername())) {
+    public boolean register(RegisterReqTo registerReqTo, RoleTo roleTo) {
+        if (manager.userExists(registerReqTo.getUsername())) {
             return false;
         }
         manager.createUser(
                 org.springframework.security.core.userdetails.User.withDefaultPasswordEncoder()
-                        .password(registerReq.getPassword())
-                        .username(registerReq.getUsername())
-                        .roles(role.name())
+                        .password(registerReqTo.getPassword())
+                        .username(registerReqTo.getUsername())
+                        .roles(roleTo.name())
                         .build()
         );
-        User savedUser = this.userService.getUserByUsername(registerReq.getUsername());
-        savedUser.setFirstName(registerReq.getFirstName());
-        savedUser.setLastName(registerReq.getLastName());
-        savedUser.setPhone(registerReq.getPhone());
-        savedUser.setEmail(registerReq.getUsername());
+        User savedUser = this.userService.getUserByUsername(registerReqTo.getUsername());
+        savedUser.setFirstName(registerReqTo.getFirstName());
+        savedUser.setLastName(registerReqTo.getLastName());
+        savedUser.setPhone(registerReqTo.getPhone());
+        savedUser.setEmail(registerReqTo.getUsername());
         this.userService.updateUser(savedUser);
         return true;
     }

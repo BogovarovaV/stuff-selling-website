@@ -2,8 +2,8 @@ package ru.skypro.homework.service.impl;
 
 import org.springframework.security.core.userdetails.UserDetails;
 import org.springframework.stereotype.Service;
-import ru.skypro.homework.dto.AdsComment;
-import ru.skypro.homework.dto.ResponseWrapperAdsComment;
+import ru.skypro.homework.dto.AdsCommentTo;
+import ru.skypro.homework.dto.ResponseWrapperAdsCommentTo;
 import ru.skypro.homework.exception.AdvertNotFoundException;
 import ru.skypro.homework.exception.CommentNotFoundException;
 import ru.skypro.homework.exception.NoAccessException;
@@ -38,10 +38,10 @@ public class CommentServiceImpl implements CommentService {
      * Create comment by advert ID
      * @param adsId - advert ID from client
      * @param adsCommentDto - advert information from client
-     * @return created comment as AdsComment (DTO)
+     * @return created comment as AdsCommentTo (DTO)
      */
     @Override
-    public AdsComment createComment(Integer adsId, AdsComment adsCommentDto) {
+    public AdsCommentTo createComment(Integer adsId, AdsCommentTo adsCommentDto) {
         Comment createdComment = commentMapper.adsCommentDtoToCommentEntity(adsCommentDto);
         createdComment.setUser(userRepository.findById(adsCommentDto.getAuthor()).orElseThrow(UserNotFoundException::new));
         createdComment.setAds(advertRepository.findById(adsId).orElseThrow(AdvertNotFoundException::new));
@@ -73,25 +73,25 @@ public class CommentServiceImpl implements CommentService {
      * Get all comments of a specific advert by advert ID
      * @param adsId - advert ID from client
      * @return list of all comments of a specific advert
-     * as ResponseWrapperAdsComment (DTO)
+     * as ResponseWrapperAdsCommentTo (DTO)
      */
     @Override
-    public ResponseWrapperAdsComment getAdsAllComments(Integer adsId) {
-        List<AdsComment> adsCommentList = commentMapper.commentEntitiesToAdsCommentDtos(commentRepository.findAllByAdsIdOrderByIdDesc(adsId));
-        ResponseWrapperAdsComment responseWrapperAdsComment = new ResponseWrapperAdsComment();
-        responseWrapperAdsComment.setCount(adsCommentList.size());
-        responseWrapperAdsComment.setResults(adsCommentList);
-        return responseWrapperAdsComment;
+    public ResponseWrapperAdsCommentTo getAdsAllComments(Integer adsId) {
+        List<AdsCommentTo> adsCommentList = commentMapper.commentEntitiesToAdsCommentDtos(commentRepository.findAllByAdsIdOrderByIdDesc(adsId));
+        ResponseWrapperAdsCommentTo responseWrapperAdsCommentTo = new ResponseWrapperAdsCommentTo();
+        responseWrapperAdsCommentTo.setCount(adsCommentList.size());
+        responseWrapperAdsCommentTo.setResults(adsCommentList);
+        return responseWrapperAdsCommentTo;
     }
 
     /**
      * Get comment of an advert by advert ID and comment ID
      * @param adsId - advert ID from client
      * @param id - comment ID from client
-     * @return found comment as AdsComment (DTO)
+     * @return found comment as AdsCommentTo (DTO)
      */
     @Override
-    public AdsComment getAdsComment(Integer adsId, Integer id) {
+    public AdsCommentTo getAdsComment(Integer adsId, Integer id) {
         Comment comment = commentRepository.findCommentById(id).orElseThrow(CommentNotFoundException::new);
         return commentMapper.commentEntityToAdsCommentDto(comment);
     }
@@ -103,10 +103,10 @@ public class CommentServiceImpl implements CommentService {
      * @param adsCommentDto - comment information from client
      * @param username - username from client
      * @param userDetails - user details from client
-     * @return updated comment as AdsComment (DTO) or throw exception
+     * @return updated comment as AdsCommentTo (DTO) or throw exception
      */
     @Override
-    public AdsComment updateAdsComment(Integer adsId, Integer id, AdsComment adsCommentDto, String username, UserDetails userDetails) {
+    public AdsCommentTo updateAdsComment(Integer adsId, Integer id, AdsCommentTo adsCommentDto, String username, UserDetails userDetails) {
         Comment comment = commentRepository.findCommentById(id).orElseThrow(CommentNotFoundException::new);
         Advert advert = advertRepository.findById(adsId).orElseThrow(AdvertNotFoundException::new);
         User user = userRepository.getById(advert.getUser().getId());

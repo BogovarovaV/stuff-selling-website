@@ -13,7 +13,7 @@ servers:
 tags:
   - description: Auth Controller
     name: Авторизация
-  - description: Ads Controller
+  - description: AdsTo Controller
     name: Объявления
   - description: User Controller
     name: Пользователи
@@ -610,7 +610,7 @@ components:
           type: integer
         title:
           type: string
-      title: Ads
+      title: AdsTo
       type: object
     AdsComment:
       example:
@@ -630,7 +630,7 @@ components:
           type: integer
         text:
           type: string
-      title: AdsComment
+      title: AdsCommentTo
       type: object
     CreateAds:
       example:
@@ -652,7 +652,7 @@ components:
           type: integer
         title:
           type: string
-      title: CreateAds
+      title: CreateAdsTo
       type: object
     CreateUser:
       example:
@@ -706,7 +706,7 @@ components:
           type: integer
         title:
           type: string
-      title: FullAds
+      title: FullAdsTo
       type: object
     LoginReq:
       example:
@@ -717,7 +717,7 @@ components:
           type: string
         username:
           type: string
-      title: LoginReq
+      title: LoginReqTo
       type: object
     NewPassword:
       example:
@@ -728,7 +728,7 @@ components:
           type: string
         newPassword:
           type: string
-      title: NewPassword
+      title: NewPasswordTo
       type: object
     RegReq:
       example:
@@ -745,7 +745,7 @@ components:
           type: string
         username:
           type: string
-      title: RegReq
+      title: RegReqTo
       type: object
     ResponseWrapper«AdsComment»:
       example:
@@ -767,7 +767,7 @@ components:
           items:
             $ref: '#/components/schemas/AdsComment'
           type: array
-      title: ResponseWrapper«AdsComment»
+      title: ResponseWrapper«AdsCommentTo»
       type: object
     ResponseWrapper«Ads»:
       example:
@@ -791,7 +791,7 @@ components:
           items:
             $ref: '#/components/schemas/Ads'
           type: array
-      title: ResponseWrapper«Ads»
+      title: ResponseWrapper«AdsTo»
       type: object
     ResponseWrapper«User»:
       example:

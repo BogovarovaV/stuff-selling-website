@@ -38,7 +38,7 @@ public class AdsController {
     )
 
     @GetMapping
-    public ResponseEntity<ResponseWrapperAds> getAllAds() {
+    public ResponseEntity<ResponseWrapperAdsTo> getAllAds() {
         return ResponseEntity.ok(advertService.getAllAds());
     }
 
@@ -49,8 +49,8 @@ public class AdsController {
     )
     @PreAuthorize("hasAnyRole('ROLE_ADMIN','ROLE_USER')")
     @PostMapping
-    public ResponseEntity<Ads> createAds(@RequestPart("properties") @Valid CreateAds ads,
-                                         @RequestPart("image") @Valid @NotNull MultipartFile file) {
+    public ResponseEntity<AdsTo> createAds(@RequestPart("properties") @Valid CreateAdsTo ads,
+                                           @RequestPart("image") @Valid @NotNull MultipartFile file) {
         System.out.println("Create ads called");
         Authentication authentication = SecurityContextHolder.getContext().getAuthentication();
         return ResponseEntity.ok(advertService.createAds(ads, file, authentication));
@@ -63,7 +63,7 @@ public class AdsController {
     )
     @GetMapping("/me")
     @PreAuthorize("hasAnyRole('ROLE_ADMIN','ROLE_USER')")
-    public ResponseEntity<ResponseWrapperAds> getAdsMe(Authentication authentication) {
+    public ResponseEntity<ResponseWrapperAdsTo> getAdsMe(Authentication authentication) {
         return ResponseEntity.ok(advertService.getAdsMe(authentication.getName()));
     }
 
@@ -73,7 +73,7 @@ public class AdsController {
             summary = "Получение списка объявлений в результате поиска (findAds) или получение списка всех объявлений (getAllAds)"
     )
     @GetMapping(params = {"search"})
-    public ResponseEntity<ResponseWrapperAds> findAds(@RequestParam(required = false) String search) {
+    public ResponseEntity<ResponseWrapperAdsTo> findAds(@RequestParam(required = false) String search) {
         return ResponseEntity.ok(advertService.findAds(search));
     }
 
@@ -97,7 +97,7 @@ public class AdsController {
     )
     @PreAuthorize("hasAnyRole('ROLE_ADMIN','ROLE_USER')")
     @GetMapping("/{id}")
-    public ResponseEntity<FullAds> getAds(@Positive @PathVariable int id) {
+    public ResponseEntity<FullAdsTo> getAds(@Positive @PathVariable int id) {
         return ResponseEntity.ok(advertService.getAds(id));
     }
 
@@ -107,12 +107,12 @@ public class AdsController {
     )
     @PreAuthorize("hasAnyRole('ROLE_ADMIN','ROLE_USER')")
     @PatchMapping("{id}")
-    public ResponseEntity<Ads> updateAds(@PathVariable int id,
-                                         @RequestPart("properties") @Valid Ads ads,
-                                         @RequestPart("image") @Valid @NotNull MultipartFile file) {
+    public ResponseEntity<AdsTo> updateAds(@PathVariable int id,
+                                           @RequestPart("properties") @Valid AdsTo adsTo,
+                                           @RequestPart("image") @Valid @NotNull MultipartFile file) {
         Authentication authentication = SecurityContextHolder.getContext().getAuthentication();
         UserDetails userDetails = (UserDetails) authentication.getPrincipal();
-        return ResponseEntity.ok(advertService.updateAdvert(id, ads, authentication.getName(), userDetails, file));
+        return ResponseEntity.ok(advertService.updateAdvert(id, adsTo, authentication.getName(), userDetails, file));
     }
 
 
@@ -122,7 +122,7 @@ public class AdsController {
     )
     @PreAuthorize("hasAnyRole('ROLE_ADMIN','ROLE_USER')")
     @GetMapping("{ad_pk}/comments")
-    public ResponseEntity<ResponseWrapperAdsComment> getAdsComments(@Positive @PathVariable int ad_pk) {
+    public ResponseEntity<ResponseWrapperAdsCommentTo> getAdsComments(@Positive @PathVariable int ad_pk) {
         return ResponseEntity.ok(commentService.getAdsAllComments(ad_pk));
     }
 
@@ -133,8 +133,8 @@ public class AdsController {
     )
     @PreAuthorize("hasAnyRole('ROLE_ADMIN','ROLE_USER')")
     @PostMapping("{ad_pk}/comments")
-    public ResponseEntity<AdsComment> addAdsComment(@Positive @PathVariable int ad_pk, @Valid @RequestBody AdsComment adsComment) {
-        return ResponseEntity.ok(commentService.createComment(ad_pk, adsComment));
+    public ResponseEntity<AdsCommentTo> addAdsComment(@Positive @PathVariable int ad_pk, @Valid @RequestBody AdsCommentTo adsCommentTo) {
+        return ResponseEntity.ok(commentService.createComment(ad_pk, adsCommentTo));
     }
 
 
@@ -159,8 +159,8 @@ public class AdsController {
     )
     @PreAuthorize("hasAnyRole('ROLE_ADMIN','ROLE_USER')")
     @GetMapping("{ad_pk}/comments/{id}")
-    public ResponseEntity<AdsComment> getAdsComment(@Positive @PathVariable int ad_pk,
-                                                 @Positive @PathVariable int id) {
+    public ResponseEntity<AdsCommentTo> getAdsComment(@Positive @PathVariable int ad_pk,
+                                                      @Positive @PathVariable int id) {
         return ResponseEntity.ok(commentService.getAdsComment(ad_pk, id));
     }
 
@@ -171,9 +171,9 @@ public class AdsController {
     )
     @PreAuthorize("hasAnyRole('ROLE_ADMIN','ROLE_USER')")
     @PatchMapping("{ad_pk}/comments/{id}")
-    public ResponseEntity<AdsComment> updateAdsComment(@Positive @PathVariable int ad_pk,
-                                                    @Positive@PathVariable int id,
-                                                    @Valid @RequestBody AdsComment comment) {
+    public ResponseEntity<AdsCommentTo> updateAdsComment(@Positive @PathVariable int ad_pk,
+                                                         @Positive@PathVariable int id,
+                                                         @Valid @RequestBody AdsCommentTo comment) {
         Authentication authentication = SecurityContextHolder.getContext().getAuthentication();
         UserDetails userDetails = (UserDetails) authentication.getPrincipal();
         return ResponseEntity.ok(commentService.updateAdsComment(ad_pk, id, comment, authentication.getName(), userDetails));
