@@ -11,12 +11,10 @@ import org.springframework.validation.annotation.Validated;
 import org.springframework.web.bind.annotation.*;
 import org.springframework.web.multipart.MultipartFile;
 import ru.skypro.homework.dto.*;
-import ru.skypro.homework.service.AdsAvatarService;
 import ru.skypro.homework.service.AdvertService;
 import ru.skypro.homework.service.CommentService;
 
 import javax.validation.Valid;
-import javax.validation.constraints.NotBlank;
 import javax.validation.constraints.Positive;
 
 @CrossOrigin(value = "http://localhost:3000")
@@ -27,13 +25,12 @@ public class AdsController {
 
     private final AdvertService advertService;
     private final CommentService commentService;
-    private final AdsAvatarService adsAvatarService;
 
-    public AdsController(AdvertService advertService, CommentService commentService, AdsAvatarService adsAvatarService) {
+    public AdsController(AdvertService advertService, CommentService commentService) {
         this.advertService = advertService;
         this.commentService = commentService;
-        this.adsAvatarService = adsAvatarService;
     }
+
 
     @Operation(
             tags = "Объявления (AdsController)",
@@ -45,6 +42,7 @@ public class AdsController {
         return ResponseEntity.ok(advertService.getAllAds());
     }
 
+
     @Operation(
             tags = "Объявления (AdsController)",
             summary = "Добавление объявления (addAds)"
@@ -52,11 +50,12 @@ public class AdsController {
     @PreAuthorize("hasAnyRole('ROLE_ADMIN','ROLE_USER')")
     @PostMapping
     public ResponseEntity<Ads> createAds(@RequestPart("properties") @Valid CreateAds ads,
-                                         @RequestPart("image") @Valid @NotNull @NotBlank MultipartFile file) {
+                                         @RequestPart("image") @Valid @NotNull MultipartFile file) {
         System.out.println("Create ads called");
         Authentication authentication = SecurityContextHolder.getContext().getAuthentication();
         return ResponseEntity.ok(advertService.createAds(ads, file, authentication));
     }
+
 
     @Operation(
             tags = "Объявления (AdsController)",
@@ -92,7 +91,6 @@ public class AdsController {
         return ResponseEntity.ok().build();
     }
 
-
     @Operation(
             tags = "Объявления (AdsController)",
             summary = "Получение объявления по id (getAds)"
@@ -103,7 +101,6 @@ public class AdsController {
         return ResponseEntity.ok(advertService.getAds(id));
     }
 
-
     @Operation(
             tags = "Объявления (AdsController)",
             summary = "Редактирование объявления по id (updateAds)"
@@ -112,7 +109,7 @@ public class AdsController {
     @PatchMapping("{id}")
     public ResponseEntity<Ads> updateAds(@PathVariable int id,
                                          @RequestPart("properties") @Valid Ads ads,
-                                         @RequestPart("image") @Valid @NotNull @NotBlank MultipartFile file) {
+                                         @RequestPart("image") @Valid @NotNull MultipartFile file) {
         Authentication authentication = SecurityContextHolder.getContext().getAuthentication();
         UserDetails userDetails = (UserDetails) authentication.getPrincipal();
         return ResponseEntity.ok(advertService.updateAdvert(id, ads, authentication.getName(), userDetails, file));

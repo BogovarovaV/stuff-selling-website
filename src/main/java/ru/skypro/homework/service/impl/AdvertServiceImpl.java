@@ -61,13 +61,10 @@ public class AdvertServiceImpl implements AdvertService {
 
     @Override
     public Ads createAds(CreateAds createAdsDto, MultipartFile file, Authentication authentication) {
-        System.out.println("Create ads service called" + createAdsDto.toString());
         Advert createdAds = adsMapper.createAdsDtoToAdvertEntity(createAdsDto);
-        System.out.println("dto" + createAdsDto.getDescription());
         createdAds.setUser(userRepository.findUsersByUsername(authentication.getName()).orElseThrow(UserNotFoundException::new));
         createdAds.setImage("/api/" + adsAvatarService.saveAds(file) + "/image");
         advertRepository.save(createdAds);
-        System.out.println(createdAds);
         return adsMapper.advertEntityToAdsDto(createdAds);
     }
 
@@ -81,6 +78,7 @@ public class AdvertServiceImpl implements AdvertService {
     @Override
     public void removeAds(Integer id, String username, UserDetails userDetails) {
         Advert advert = advertRepository.findById(id).orElseThrow(AdvertNotFoundException::new);
+        // check if user has access to delete advert (has role "Admin" or user wants to delete his own advert)
         if (userDetails.getAuthorities().toString().contains("ROLE_ADMIN")
                 || username.equals(advert.getUser().getUsername())) {
             advertRepository.delete(advert);
@@ -113,9 +111,9 @@ public class AdvertServiceImpl implements AdvertService {
     @Override
     public Ads updateAdvert(Integer id, Ads adsDto, String username, UserDetails userDetails, MultipartFile file) {
         Advert advert = advertRepository.findById(id).orElseThrow(AdvertNotFoundException::new);
+        // check if user has access to change advert (has role "Admin" or user wants to change his own advert)
         if (userDetails.getAuthorities().toString().contains("ROLE_ADMIN")
                 || username.equals(advert.getUser().getUsername())) {
-        //    advert.setUsers(userRepository.findUsersByUsername(username).orElseThrow(UserNotFoundException::new));
             advert.setImage(adsAvatarService.saveAds(file));
             advert.setPrice(adsDto.getPrice());
             advert.setTitle(adsDto.getTitle());

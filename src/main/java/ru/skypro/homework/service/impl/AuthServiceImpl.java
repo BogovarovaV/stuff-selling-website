@@ -5,15 +5,12 @@ import org.springframework.security.crypto.bcrypt.BCryptPasswordEncoder;
 import org.springframework.security.crypto.password.PasswordEncoder;
 import org.springframework.security.provisioning.UserDetailsManager;
 import org.springframework.stereotype.Service;
-import org.springframework.validation.annotation.Validated;
 import ru.skypro.homework.dto.RegisterReq;
 import ru.skypro.homework.dto.Role;
 import ru.skypro.homework.exception.NoAccessException;
 import ru.skypro.homework.model.User;
 import ru.skypro.homework.service.AuthService;
 import ru.skypro.homework.service.UserService;
-
-import javax.validation.Valid;
 
 @Service
 public class AuthServiceImpl implements AuthService {
@@ -82,11 +79,11 @@ public class AuthServiceImpl implements AuthService {
      */
     @Override
     public void changePassword(String username, String currentPassword, String newPassword) {
-        UserDetails userDetails = manager.loadUserByUsername(username);
-        String encryptedPassword = userDetails.getPassword();
+        UserDetails currentUserDetails = manager.loadUserByUsername(username);
+        String encryptedPassword = currentUserDetails.getPassword();
         String encryptedPasswordWithoutEncryptionType = encryptedPassword.substring(8);
         if (encoder.matches(currentPassword, encryptedPasswordWithoutEncryptionType)) {
-            userService.savePassword(username, encoder.encode(newPassword));
+            userService.savePassword(username, "{bcrypt}" + encoder.encode(newPassword));
         } else {
             throw new NoAccessException();
         }
