@@ -10,6 +10,7 @@ public interface DataTest {
     String EMAIL_1 = "uu@gmail.com";
     String EMAIL_2 = "us@gmail.com";
     String PHONE = "+12345678901";
+    String PHONE_2 = "+12345678905";
     String USERNAME = EMAIL_1;
     String PASSWORD = "1234";
 

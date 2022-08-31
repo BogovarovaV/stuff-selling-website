@@ -37,8 +37,8 @@ public class UserController {
             tags = "Пользователи (UserController)",
             summary = "Получение пользователей (getUsers)"
     )
-    @GetMapping("/me")
     @PreAuthorize("hasAnyRole('ROLE_ADMIN','ROLE_USER')")
+    @GetMapping("/me")
     public ResponseEntity<User> getCurrentUser() {
         Authentication authentication = SecurityContextHolder.getContext().getAuthentication();
         User user = userService.getUserByUsername(authentication.getName());
@@ -61,7 +61,7 @@ public class UserController {
             summary = "Изменение пароля (setPassword)"
     )
     @PreAuthorize("hasAnyRole('ROLE_ADMIN','ROLE_USER')")
-    @PostMapping("set_password")
+    @PostMapping("/set_password")
     public ResponseEntity<NewPasswordTo> setPassword(@Valid @RequestBody NewPasswordTo newPasswordTo) {
         Authentication authentication = SecurityContextHolder.getContext().getAuthentication();
         authService.changePassword(
@@ -77,7 +77,7 @@ public class UserController {
             summary = "Получение пользователя по id (getUser)"
     )
     @PreAuthorize("hasRole('ROLE_ADMIN')")
-    @GetMapping("{id}")
+    @GetMapping("/{id}")
     public ResponseEntity<UserTo> getAnyUser(@Positive @PathVariable("id") int id) {
         return ResponseEntity.ok(userService.getUser(id));
     }
@@ -87,7 +87,7 @@ public class UserController {
             summary = "Получение всех пользователей с сортировкой по id (getAllUsersWithOrderById)"
     )
     @PreAuthorize("hasRole('ROLE_ADMIN')")
-    @GetMapping("/")
+    @GetMapping
     public ResponseEntity<ResponseWrapperUserTo> getAllUsersWithOrderById() {
         return ResponseEntity.ok(userService.getAllUsersWithOrderById());
     }

@@ -11,8 +11,10 @@ public class CreateAdsTo {
 
   @NotBlank
   private String description;
+
   @Positive
   private Integer price;
+
   @NotBlank
   @Size(min = 3)
   private String title;
