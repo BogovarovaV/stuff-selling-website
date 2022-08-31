@@ -1,5 +1,6 @@
 package ru.skypro.homework;
 
+import java.nio.charset.StandardCharsets;
 import java.time.OffsetDateTime;
 
 public interface DataTest {
@@ -21,10 +22,17 @@ public interface DataTest {
     String IMAGE = "image";
     String DESC = "description";
 
+    Integer COUNT = 1;
+
     Integer COMMENT_ID_1 = 1;
     Integer COMMENT_ID_2 = 2;
     OffsetDateTime DATE_TIME_1 = OffsetDateTime.MIN;
     OffsetDateTime DATE_TIME_2 = OffsetDateTime.MAX;
     String TEXT_1 = "text";
     String TEXT_2 = "updated text";
+
+    String ADS_AVATAR_ID = "1";
+    byte[] ADS_AVATAR_IMAGE = "f6d73k9r".getBytes(StandardCharsets.UTF_8);
+
+
 }
