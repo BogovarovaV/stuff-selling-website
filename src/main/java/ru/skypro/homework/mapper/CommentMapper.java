@@ -2,7 +2,7 @@ package ru.skypro.homework.mapper;
 
 import org.mapstruct.Mapper;
 import org.mapstruct.Mapping;
-import ru.skypro.homework.dto.AdsComment;
+import ru.skypro.homework.dto.AdsCommentTo;
 import ru.skypro.homework.model.Comment;
 
 import java.util.List;
@@ -11,11 +11,11 @@ import java.util.List;
 public interface CommentMapper {
 
     @Mapping(source = "id", target = "pk")
-    @Mapping(source = "users.id", target = "author")
-    AdsComment commentEntityToAdsCommentDto(Comment comment);
+    @Mapping(source = "user.id", target = "author")
+    AdsCommentTo commentEntityToAdsCommentDto(Comment comment);
 
     @Mapping(source = "pk", target = "id")
-    Comment adsCommentDtoToCommentEntity(AdsComment adsCommentDto);
+    Comment adsCommentDtoToCommentEntity(AdsCommentTo adsCommentDto);
 
-    List<AdsComment> commentEntitiesToAdsCommentDtos(List<Comment> commentList);
+    List<AdsCommentTo> commentEntitiesToAdsCommentDtos(List<Comment> commentList);
 }

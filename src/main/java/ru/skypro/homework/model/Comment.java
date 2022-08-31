@@ -16,14 +16,12 @@ public class Comment {
     @Id
     @GeneratedValue(strategy = GenerationType.IDENTITY)
     private Integer id;
-//    private Integer pk;
 
     private OffsetDateTime createdAt;
     private String text;
 
     @ManyToOne
-    private Users users;
-//    private Integer author;
+    private User user;
 
     @ManyToOne
     private Advert ads;

@@ -17,16 +17,15 @@ public class Advert {
     @GeneratedValue(strategy = GenerationType.IDENTITY)
     private Integer id;
 
-    //    private Integer pk;
-
     private Integer price;
     private String title;
+
+    @Lob
     private String image;
     private String description;
 
     @ManyToOne
-    private Users users;
-    //    private Integer author;
+    private User user;
 
     @OneToMany
     private List<Comment> commentList;

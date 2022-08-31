@@ -6,16 +6,18 @@ import lombok.NoArgsConstructor;
 
 import javax.persistence.Entity;
 import javax.persistence.Id;
+import javax.persistence.Lob;
 
 @Entity
 @Data
 @NoArgsConstructor
 @AllArgsConstructor
-public class Authorities {
+public class AdsAvatar {
 
     @Id
-    private String username;
+    private String id;
 
-    private String authority;
+    @Lob
+    private byte[] image;
 
 }

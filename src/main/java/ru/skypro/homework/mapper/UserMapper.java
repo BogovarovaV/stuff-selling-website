@@ -1,8 +1,8 @@
 package ru.skypro.homework.mapper;
 
 import org.mapstruct.Mapper;
-import ru.skypro.homework.dto.User;
-import ru.skypro.homework.model.Users;
+import ru.skypro.homework.dto.UserTo;
+import ru.skypro.homework.model.User;
 
 import java.util.List;
 
@@ -10,7 +10,7 @@ import java.util.List;
 @Mapper(componentModel = "spring")
 public interface UserMapper {
 
-    User usersEntityToUserDto(Users users);
+    UserTo usersEntityToUserDto(User user);
 
-    List<User> usersEntitiesToUserDtos(List<Users> usersList);
+    List<UserTo> usersEntitiesToUserDtos(List<User> userList);
 }

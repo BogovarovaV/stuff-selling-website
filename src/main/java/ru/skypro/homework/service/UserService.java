@@ -1,20 +1,21 @@
 package ru.skypro.homework.service;
 
-import ru.skypro.homework.dto.ResponseWrapperUser;
-import ru.skypro.homework.dto.User;
-import ru.skypro.homework.model.Users;
+import org.springframework.security.core.Authentication;
+import ru.skypro.homework.dto.ResponseWrapperUserTo;
+import ru.skypro.homework.dto.UserTo;
+import ru.skypro.homework.model.User;
 
 public interface UserService {
 
-    ResponseWrapperUser getAllUsers();
+    ResponseWrapperUserTo getAllUsersWithOrderById();
 
-    User updateUser(User userDto, String username);
+    UserTo updateUser(UserTo userDto, Authentication authentication);
 
-    User getUser(Integer id);
+    UserTo getUser(Integer id);
 
-    Users getUserByUsername(String username);
+    User getUserByUsername(String username);
 
-    Users updateUser(Users users);
+    User updateUser(User user);
 
     void savePassword(String username, String newPassword);
 }
