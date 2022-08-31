@@ -54,11 +54,11 @@ public class AdvertServiceImpl implements AdvertService {
 
     /**
      * Create advert
-     * // * @param createAdsDto - advert from client
-     *
+     * @param createAdsDto      - advert information from client
+     * @param file              - advert avatar from client
+     * @param authentication    - user authentication
      * @return created advert as AdsTo (DTO)
      */
-
     @Override
     public AdsTo createAds(CreateAdsTo createAdsDto, MultipartFile file, Authentication authentication) {
         Advert createdAds = adsMapper.createAdsDtoToAdvertEntity(createAdsDto);

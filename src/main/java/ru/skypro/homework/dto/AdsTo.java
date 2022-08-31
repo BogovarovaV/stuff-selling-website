@@ -12,13 +12,17 @@ public class AdsTo {
   private Integer author;
 
   private String image;
+
   @Positive
   private Integer pk;
+
   @Positive
   private Integer price;
+
   @NotBlank
   @Size(min = 3)
   private String title;
+
   @Size(min = 8)
   @NotBlank
   private String description;

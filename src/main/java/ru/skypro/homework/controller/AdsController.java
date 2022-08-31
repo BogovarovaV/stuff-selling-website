@@ -51,7 +51,6 @@ public class AdsController {
     @PostMapping
     public ResponseEntity<AdsTo> createAds(@RequestPart("properties") @Valid CreateAdsTo ads,
                                            @RequestPart("image") @Valid @NotNull MultipartFile file) {
-        System.out.println("Create ads called");
         Authentication authentication = SecurityContextHolder.getContext().getAuthentication();
         return ResponseEntity.ok(advertService.createAds(ads, file, authentication));
     }
