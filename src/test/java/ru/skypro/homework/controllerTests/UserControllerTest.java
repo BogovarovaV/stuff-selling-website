@@ -17,10 +17,13 @@ import org.springframework.test.web.servlet.setup.MockMvcBuilders;
 import org.springframework.web.context.WebApplicationContext;
 import ru.skypro.homework.controller.UserController;
 import ru.skypro.homework.dto.UserTo;
+import ru.skypro.homework.exception.NoAccessException;
 import ru.skypro.homework.mapper.UserMapper;
 import ru.skypro.homework.model.User;
 import ru.skypro.homework.repository.UserRepository;
-import ru.skypro.homework.service.*;
+import ru.skypro.homework.service.AdsAvatarService;
+import ru.skypro.homework.service.AdvertService;
+import ru.skypro.homework.service.CommentService;
 import ru.skypro.homework.service.impl.AuthServiceImpl;
 import ru.skypro.homework.service.impl.UserServiceImpl;
 
@@ -139,6 +142,23 @@ class UserControllerTest {
                 .andExpect(jsonPath("$.lastName").value(LASTNAME))
                 .andExpect(jsonPath("$.email").value(EMAIL_1))
                 .andExpect(jsonPath("$.phone").value(PHONE_2));
+    }
+
+    @WithMockUser(username="stranger@mail.ru", authorities = "USER")
+    @Test
+    void shouldThrowException_whenUserTryingToUpdateAlienUser() throws Exception {
+        user.setPhone(PHONE_2);
+        when(auth.getName()).thenReturn("stranger@mail.ru");
+        when(userRepository.findById(any())).thenReturn(Optional.of(user));
+        mockMvc.perform(MockMvcRequestBuilders
+                        .patch("/users/me")
+                        .content(userObject.toString())
+                        .contentType(MediaType.APPLICATION_JSON)
+                        .accept(MediaType.APPLICATION_JSON)
+
+                )
+                .andExpect(status().isForbidden())
+                .andExpect(mvcResult -> mvcResult.getResolvedException().getClass().equals(NoAccessException.class));
     }
 
     @WithMockUser(username="admin", authorities = "ADMIN")
