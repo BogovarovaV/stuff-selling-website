@@ -14,7 +14,7 @@ public class AdsAvatar {
 
     @Id
     @GeneratedValue(strategy = GenerationType.IDENTITY)
-    private String id;
+    private Integer id;
 
     @Lob
     private byte[] image;

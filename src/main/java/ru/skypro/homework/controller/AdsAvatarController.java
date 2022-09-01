@@ -23,7 +23,7 @@ public class AdsAvatarController {
             summary = "Сохранение изображения объявления (saveAds)"
     )
     @PostMapping(value = "/upl", consumes = MediaType.MULTIPART_FORM_DATA_VALUE)
-    public String saveAds(@RequestParam MultipartFile image) {
+    public Integer saveAds(@RequestParam MultipartFile image) {
         return adsAvatarService.saveAds(image);
     }
 
