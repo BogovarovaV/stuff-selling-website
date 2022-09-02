@@ -30,7 +30,6 @@ public class AdvertServiceImpl implements AdvertService {
     private final AdsMapper adsMapper;
     private final AdsAvatarService adsAvatarService;
 
-
     public AdvertServiceImpl(AdvertRepository advertRepository, UserRepository userRepository, AdsMapper adsMapper, AdsAvatarService adsAvatarService) {
         this.advertRepository = advertRepository;
         this.userRepository = userRepository;

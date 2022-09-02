@@ -43,7 +43,7 @@ import static org.mockito.Mockito.when;
 import static org.springframework.test.web.servlet.result.MockMvcResultMatchers.jsonPath;
 import static org.springframework.test.web.servlet.result.MockMvcResultMatchers.status;
 import static ru.skypro.homework.DataTest.*;
-
+import static org.mockito.Mockito.*;
 
 @WebMvcTest(controllers = AdsController.class)
 public class AdsControllerTest {
@@ -64,6 +64,7 @@ public class AdsControllerTest {
     private List<AdsCommentTo> commentToList;
     private List<AdsTo> adsToList;
     private List<Advert> advertList;
+
     @Autowired
     private WebApplicationContext webApplicationContext;
 
@@ -102,14 +103,11 @@ public class AdsControllerTest {
         //dto
         adsTo = new AdsTo();
         adsTo.setPk(ADS_ID);
-
         adsTo.setPrice(PRICE);
-
         adsTo.setTitle(TITLE);
         adsTo.setImage(IMAGE);
         adsTo.setAuthor(USER_ID);
         adsTo.setDescription(DESC);
-
 
         adsToList = new ArrayList<>();
         adsToList.add(adsTo);
@@ -134,15 +132,12 @@ public class AdsControllerTest {
         fullAds.setPhone(PHONE);
         fullAds.setPk(ADS_ID);
         fullAds.setPrice(PRICE);
-
         fullAds.setTitle(TITLE);
 
         commentTo = new AdsCommentTo();
         commentTo.setAuthor(USER_ID);
-
         commentTo.setCreatedAt(DATE_TIME);
         commentTo.setPk(COMMENT_ID);
-
         commentTo.setText(TEXT_1);
 
         commentToList = new ArrayList<>();
@@ -153,12 +148,9 @@ public class AdsControllerTest {
         advert = new Advert();
         advert.setId(ADS_ID);
         advert.setPrice(PRICE);
-
-
         advert.setTitle(TITLE);
         advert.setImage(IMAGE);
         advert.setDescription(DESC);
-
 
         advertList = new ArrayList<>();
         advertList.add(advert);
@@ -170,12 +162,10 @@ public class AdsControllerTest {
         comment.setCreatedAt(DATE_TIME);
 
         user = new User(USER_ID, FIRSTNAME, LASTNAME, EMAIL,
-
                 PHONE, USERNAME, PASSWORD, true, List.of(advert), List.of(comment));
 
         advert.setUser(user);
         comment.setUser(user);
-
 
         adsAvatar = new AdsAvatar();
         adsAvatar.setId(ADS_AVATAR_ID);
@@ -189,12 +179,10 @@ public class AdsControllerTest {
                 "application/json",
                 "{\"description\": \"description1\", \"price\": \"10000\",\"title\": \"title1\"}".getBytes());
 
-
         image = new MockMultipartFile(
                 "image",
                 "image.png",
                 MediaType.IMAGE_PNG_VALUE, ADS_AVATAR_IMAGE);
-
 
         advertObject = new JSONObject();
         advertObject.put("author", USER_ID);
@@ -209,7 +197,6 @@ public class AdsControllerTest {
         commentObject.put("createdAt", DATE_TIME.toString());
         commentObject.put("pk", COMMENT_ID);
         commentObject.put("text", TEXT_2);
-
     }
 
     @WithMockUser(username = "admin", authorities = "ADMIN")
@@ -218,16 +205,16 @@ public class AdsControllerTest {
         when(adsMapper.advertEntitiesToAdsDtos(any(List.class))).thenReturn((List.of(adsTo)));
 
         mockMvc.perform(MockMvcRequestBuilders
-                        .get("/ads")
-                )
-                .andExpect(status().isOk())
-                .andExpect(jsonPath("$.count").value(COUNT))
-                .andExpect(jsonPath("$.results[*].author").value(USER_ID))
-                .andExpect(jsonPath("$.results[*].image").value(IMAGE))
-                .andExpect(jsonPath("$.results[*].pk").value(ADS_ID))
-                .andExpect(jsonPath("$.results[*].price").value(PRICE))
-                .andExpect(jsonPath("$.results[*].title").value(TITLE))
-                .andExpect(jsonPath("$.results[*].description").value(DESC));
+                        .get("/ads"))
+                        .andExpect(status().isOk())
+                        .andExpect(jsonPath("$.count").value(COUNT))
+                        .andExpect(jsonPath("$.results[*].author").value(USER_ID))
+                        .andExpect(jsonPath("$.results[*].image").value(IMAGE))
+                        .andExpect(jsonPath("$.results[*].pk").value(ADS_ID))
+                        .andExpect(jsonPath("$.results[*].price").value(PRICE))
+                        .andExpect(jsonPath("$.results[*].title").value(TITLE))
+                        .andExpect(jsonPath("$.results[*].description").value(DESC));
+
     }
 
     @WithMockUser(username = USERNAME, authorities = "USER")
@@ -242,21 +229,7 @@ public class AdsControllerTest {
                         .multipart("/ads")
                         .file(adsJson)
                         .file(image))
-
-                .andExpect(status().isOk());
-    }
-
-    @WithMockUser(username = USERNAME, authorities = "USER")
-    @Test
-    public void testShouldGetAdsMe() throws Exception {
-        when(auth.getName()).thenReturn(USERNAME);
-        when(userRepository.findUsersByUsername(any())).thenReturn(Optional.ofNullable(user));
-        when(adsMapper.advertEntitiesToAdsDtos(any())).thenReturn(adsToList);
-        mockMvc.perform(MockMvcRequestBuilders
-                        .get("/ads/me")
-                )
-                .andExpect(status().isOk());
-
+                        .andExpect(status().isOk());
     }
 
     @WithMockUser(username = "user", authorities = "USER")
@@ -265,10 +238,8 @@ public class AdsControllerTest {
         when(adsMapper.advertEntitiesToAdsDtos(any())).thenReturn(adsToList);
 
         mockMvc.perform(MockMvcRequestBuilders
-                        .get("/ads")
-                )
-                .andExpect(status().isOk());
-
+                        .get("/ads"))
+                        .andExpect(status().isOk());
     }
 
     @WithMockUser(username = USERNAME, password = PASSWORD, authorities = "USER")
@@ -279,9 +250,8 @@ public class AdsControllerTest {
         doNothing().when(adsAvatarRepository).delete(any());
 
         mockMvc.perform(MockMvcRequestBuilders
-                        .delete("/ads/"+ USER_ID)
-                )
-                .andExpect(status().isOk());
+                        .delete("/ads/"+ USER_ID))
+                        .andExpect(status().isOk());
     }
 
     @WithMockUser(username = USERNAME, password = PASSWORD, authorities = "USER")
@@ -292,42 +262,17 @@ public class AdsControllerTest {
         when(adsMapper.advertEntityToFullAdsDto(any())).thenReturn(fullAds);
 
         mockMvc.perform(MockMvcRequestBuilders
-                        .get("/ads/" + ADS_ID)
-                )
-                .andExpect(status().isOk())
-                .andExpect(jsonPath("$.authorFirstName").value(FIRSTNAME))
-                .andExpect(jsonPath("$.authorLastName").value(LASTNAME))
-                .andExpect(jsonPath("$.description").value(DESC))
-                .andExpect(jsonPath("$.email").value(EMAIL))
-                .andExpect(jsonPath("$.phone").value(PHONE))
-                .andExpect(jsonPath("$.pk").value(ADS_ID))
-                .andExpect(jsonPath("$.price").value(PRICE))
-                .andExpect(jsonPath("$.title").value(TITLE));
+                        .get("/ads/" + ADS_ID))
+                        .andExpect(status().isOk())
+                        .andExpect(jsonPath("$.authorFirstName").value(FIRSTNAME))
+                        .andExpect(jsonPath("$.authorLastName").value(LASTNAME))
+                        .andExpect(jsonPath("$.description").value(DESC))
+                        .andExpect(jsonPath("$.email").value(EMAIL))
+                        .andExpect(jsonPath("$.phone").value(PHONE))
+                        .andExpect(jsonPath("$.pk").value(ADS_ID))
+                        .andExpect(jsonPath("$.price").value(PRICE))
+                        .andExpect(jsonPath("$.title").value(TITLE));
     }
-
-//    @WithMockUser(username = USERNAME, password = PASSWORD, authorities = "USER")
-//    @Test
-//    public void testShouldUpdateAdsById() throws Exception {
-//        when(auth.getName()).thenReturn(USERNAME);
-//        when(auth.getPrincipal()).thenReturn(user);
-//        when(advertRepository.findById(any())).thenReturn(Optional.ofNullable(advert));
-//        advert.setPrice(PRICE_2);
-//        when(adsAvatarService.saveAds(any())).thenReturn(IMAGE);
-//
-//        mockMvc.perform(MockMvcRequestBuilders
-//                        .patch("/ads/" + ADS_ID)
-//                        .content(advertObject.toString())
-//                        .contentType(MediaType.APPLICATION_JSON)
-//                        .accept(MediaType.APPLICATION_JSON)
-//                )
-//                .andExpect(status().isOk())
-//                .andExpect(jsonPath("$.author").value(USER_ID))
-//                .andExpect(jsonPath("$.image").value(IMAGE))
-//                .andExpect(jsonPath("$.pk").value(ADS_ID))
-//                .andExpect(jsonPath("$.price").value(PRICE_2))
-//                .andExpect(jsonPath("$.title").value(TITLE))
-//                .andExpect(jsonPath("$.description").value(DESC));
-//    }
 
     @WithMockUser(username = "user", authorities = "USER")
     @Test
@@ -335,14 +280,13 @@ public class AdsControllerTest {
         when(commentMapper.commentEntitiesToAdsCommentDtos(any())).thenReturn(commentToList);
 
         mockMvc.perform(MockMvcRequestBuilders
-                        .get("/ads/" + ADS_ID + "/comments")
-                )
-                .andExpect(status().isOk())
-                .andExpect(jsonPath("$.count").value(COUNT))
-                .andExpect(jsonPath(("$.results")).hasJsonPath())
-                .andExpect(jsonPath("$.results[*].author").value(USER_ID))
-                .andExpect(jsonPath("$.results[*].pk").value(COMMENT_ID))
-                .andExpect(jsonPath("$.results[*].text").value(TEXT_1));
+                        .get("/ads/" + ADS_ID + "/comments"))
+                        .andExpect(status().isOk())
+                        .andExpect(jsonPath("$.count").value(COUNT))
+                        .andExpect(jsonPath(("$.results")).hasJsonPath())
+                        .andExpect(jsonPath("$.results[*].author").value(USER_ID))
+                        .andExpect(jsonPath("$.results[*].pk").value(COMMENT_ID))
+                        .andExpect(jsonPath("$.results[*].text").value(TEXT_1));
     }
 
     @WithMockUser(username = USERNAME, password = PASSWORD, authorities = "USER")
@@ -353,14 +297,15 @@ public class AdsControllerTest {
         when(userRepository.findUsersByUsername(any())).thenReturn(Optional.ofNullable(user));
         when(advertRepository.findById(any())).thenReturn(Optional.ofNullable(advert));
 
+
         mockMvc.perform(MockMvcRequestBuilders
                         .post("/ads/" + ADS_ID + "/comments")
+
                         .content(commentObject.toString())
                         .contentType(MediaType.APPLICATION_JSON)
-                        .accept(MediaType.APPLICATION_JSON)
-                )
-                .andExpect(status().isOk())
-                .andExpect(jsonPath("$.author").value(USER_ID));
+                        .accept(MediaType.APPLICATION_JSON))
+                        .andExpect(status().isOk())
+                        .andExpect(jsonPath("$.author").value(USER_ID));
     }
 
     @WithMockUser(username = USERNAME, password = PASSWORD, authorities = "USER")
@@ -397,15 +342,14 @@ public class AdsControllerTest {
         when(commentRepository.findCommentById(any())).thenReturn(Optional.of(comment));
         when(commentMapper.commentEntityToAdsCommentDto(any())).thenReturn(commentTo);
 
+
         mockMvc.perform(MockMvcRequestBuilders
                         .get("/ads/" + ADS_ID + "/comments/" + COMMENT_ID)
-
-                        .accept(MediaType.APPLICATION_JSON)
-                )
-                .andExpect(status().isOk())
-                .andExpect(jsonPath("$.author").value(USER_ID))
-                .andExpect(jsonPath("$.pk").value(COMMENT_ID))
-                .andExpect(jsonPath("$.text").value(TEXT_1));
+                        .accept(MediaType.APPLICATION_JSON))
+                        .andExpect(status().isOk())
+                        .andExpect(jsonPath("$.author").value(USER_ID))
+                        .andExpect(jsonPath("$.pk").value(COMMENT_ID))
+                        .andExpect(jsonPath("$.text").value(TEXT_1));
     }
 
     @WithMockUser(username = USERNAME, authorities = "USER")
@@ -421,12 +365,11 @@ public class AdsControllerTest {
                         .patch("/ads/" + ADS_ID + "/comments/" + COMMENT_ID)
                         .content(commentObject.toString())
                         .contentType(MediaType.APPLICATION_JSON)
-                        .accept(MediaType.APPLICATION_JSON)
-                )
-                .andExpect(status().isOk())
-                .andExpect(jsonPath("$.author").value(USER_ID))
-                .andExpect(jsonPath("$.pk").value(COMMENT_ID))
-                .andExpect(jsonPath("$.text").value(TEXT_2));
+                        .accept(MediaType.APPLICATION_JSON))
+                        .andExpect(status().isOk())
+                        .andExpect(jsonPath("$.author").value(USER_ID))
+                        .andExpect(jsonPath("$.pk").value(COMMENT_ID))
+                        .andExpect(jsonPath("$.text").value(TEXT_2));
     }
 
     @WithMockUser(username = "stranger@mail.ru", authorities = "USER")

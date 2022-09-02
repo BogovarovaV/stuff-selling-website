@@ -35,6 +35,7 @@ import static org.springframework.test.web.servlet.result.MockMvcResultMatchers.
 import static org.springframework.test.web.servlet.result.MockMvcResultMatchers.status;
 import static ru.skypro.homework.DataTest.*;
 
+
 @WebMvcTest
 class UserControllerTest {
 
@@ -121,7 +122,6 @@ class UserControllerTest {
                 .andExpect(jsonPath("$.firstName").value(FIRSTNAME))
                 .andExpect(jsonPath("$.lastName").value(LASTNAME))
                 .andExpect(jsonPath("$.email").value(EMAIL))
-
                 .andExpect(jsonPath("$.phone").value(PHONE));
     }
 
@@ -135,15 +135,13 @@ class UserControllerTest {
                         .patch("/users/me")
                         .content(userObject.toString())
                         .contentType(MediaType.APPLICATION_JSON)
-                        .accept(MediaType.APPLICATION_JSON)
-
-                )
-                .andExpect(status().isOk())
-                .andExpect(jsonPath("$.id").value(USER_ID))
-                .andExpect(jsonPath("$.firstName").value(FIRSTNAME))
-                .andExpect(jsonPath("$.lastName").value(LASTNAME))
-                .andExpect(jsonPath("$.email").value(EMAIL))
-                .andExpect(jsonPath("$.phone").value(PHONE_2));
+                        .accept(MediaType.APPLICATION_JSON))
+                        .andExpect(status().isOk())
+                        .andExpect(jsonPath("$.id").value(USER_ID))
+                        .andExpect(jsonPath("$.firstName").value(FIRSTNAME))
+                        .andExpect(jsonPath("$.lastName").value(LASTNAME))
+                        .andExpect(jsonPath("$.email").value(EMAIL))
+                        .andExpect(jsonPath("$.phone").value(PHONE_2));
     }
 
     @WithMockUser(username="admin", authorities = "ADMIN")
@@ -153,14 +151,13 @@ class UserControllerTest {
         when(userMapper.usersEntityToUserDto(any())).thenReturn(userTo);
 
         mockMvc.perform(MockMvcRequestBuilders
-                        .get("/users/" + USER_ID)
-                )
-                .andExpect(status().isOk())
-                .andExpect(jsonPath("$.id").value(USER_ID))
-                .andExpect(jsonPath("$.firstName").value(FIRSTNAME))
-                .andExpect(jsonPath("$.lastName").value(LASTNAME))
-                .andExpect(jsonPath("$.email").value(EMAIL))
-                .andExpect(jsonPath("$.phone").value(PHONE));
+                        .get("/users/" + USER_ID))
+                        .andExpect(status().isOk())
+                        .andExpect(jsonPath("$.id").value(USER_ID))
+                        .andExpect(jsonPath("$.firstName").value(FIRSTNAME))
+                        .andExpect(jsonPath("$.lastName").value(LASTNAME))
+                        .andExpect(jsonPath("$.email").value(EMAIL))
+                        .andExpect(jsonPath("$.phone").value(PHONE));
     }
 
     @WithMockUser(username="admin", authorities = "ADMIN")
@@ -169,14 +166,13 @@ class UserControllerTest {
         when(userMapper.usersEntitiesToUserDtos(any())).thenReturn(List.of(userTo));
 
         mockMvc.perform(MockMvcRequestBuilders
-                        .get("/users")
-                )
-                .andExpect(status().isOk())
-                .andExpect(jsonPath("$.count").value(COUNT))
-                .andExpect(jsonPath("$.results[*].id").value(USER_ID))
-                .andExpect(jsonPath("$.results[*].firstName").value(FIRSTNAME))
-                .andExpect(jsonPath("$.results[*].lastName").value(LASTNAME))
-                .andExpect(jsonPath("$.results[*].email").value(EMAIL))
-                .andExpect(jsonPath("$.results[*].phone").value(PHONE));
+                        .get("/users"))
+                        .andExpect(status().isOk())
+                        .andExpect(jsonPath("$.count").value(COUNT))
+                        .andExpect(jsonPath("$.results[*].id").value(USER_ID))
+                        .andExpect(jsonPath("$.results[*].firstName").value(FIRSTNAME))
+                        .andExpect(jsonPath("$.results[*].lastName").value(LASTNAME))
+                        .andExpect(jsonPath("$.results[*].email").value(EMAIL))
+                        .andExpect(jsonPath("$.results[*].phone").value(PHONE));
     }
 }
