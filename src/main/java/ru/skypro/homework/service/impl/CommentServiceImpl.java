@@ -10,7 +10,6 @@ import ru.skypro.homework.exception.CommentNotFoundException;
 import ru.skypro.homework.exception.NoAccessException;
 import ru.skypro.homework.exception.UserNotFoundException;
 import ru.skypro.homework.mapper.CommentMapper;
-import ru.skypro.homework.model.Advert;
 import ru.skypro.homework.model.Comment;
 import ru.skypro.homework.model.User;
 import ru.skypro.homework.repository.AdvertRepository;
@@ -57,11 +56,11 @@ public class CommentServiceImpl implements CommentService {
      * @param username username from client
      * @param userDetails - user details from client
      */
+    @Transactional
     @Override
     public void deleteAdsComment(Integer adsId, Integer id, String username, UserDetails userDetails) {
         Comment comment = commentRepository.findCommentById(id).orElseThrow(CommentNotFoundException::new);
-        Advert advert = advertRepository.findById(adsId).orElseThrow(AdvertNotFoundException::new);
-        User user = userRepository.getById(advert.getUser().getId());
+        User user = userRepository.getById(comment.getUser().getId());
         if (userDetails.getAuthorities().toString().contains("ROLE_ADMIN")
                 || username.equals(user.getUsername())) {
             commentRepository.delete(comment);
@@ -112,8 +111,7 @@ public class CommentServiceImpl implements CommentService {
     @Override
     public AdsCommentTo updateAdsComment(Integer adsId, Integer id, AdsCommentTo adsCommentDto, String username, UserDetails userDetails) {
         Comment comment = commentRepository.findCommentById(id).orElseThrow(CommentNotFoundException::new);
-        Advert advert = advertRepository.findById(adsId).orElseThrow(AdvertNotFoundException::new);
-        User user = userRepository.getById(advert.getUser().getId());
+        User user = userRepository.getById(comment.getUser().getId());
         if (userDetails.getAuthorities().toString().contains("ROLE_ADMIN")
                 || username.equals(user.getUsername())) {
             comment.setCreatedAt(adsCommentDto.getCreatedAt());
