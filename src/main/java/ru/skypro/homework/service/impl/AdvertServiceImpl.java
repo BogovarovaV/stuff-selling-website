@@ -114,7 +114,7 @@ public class AdvertServiceImpl implements AdvertService {
         // check if user has access to change advert (has role "Admin" or user wants to change his own advert)
         if (userDetails.getAuthorities().toString().contains("ROLE_ADMIN")
                 || username.equals(advert.getUser().getUsername())) {
-            advert.setImage(adsAvatarService.saveAds(file));
+            advert.setImage("/api/" + adsAvatarService.saveAds(file) + "/image");
             advert.setPrice(adsDto.getPrice());
             advert.setTitle(adsDto.getTitle());
             advert.setDescription(adsDto.getDescription());
