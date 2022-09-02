@@ -3,6 +3,7 @@ package ru.skypro.homework.service.impl;
 import org.springframework.security.core.Authentication;
 import org.springframework.security.core.userdetails.UserDetails;
 import org.springframework.stereotype.Service;
+import org.springframework.transaction.annotation.Transactional;
 import org.springframework.web.multipart.MultipartFile;
 import ru.skypro.homework.dto.AdsTo;
 import ru.skypro.homework.dto.CreateAdsTo;
@@ -42,6 +43,7 @@ public class AdvertServiceImpl implements AdvertService {
      *
      * @return list as ResponseWrapperAdsTo (DTO)
      */
+    @Transactional
     @Override
     public ResponseWrapperAdsTo getAllAds() {
         System.out.println("Get all ads service called");
@@ -147,6 +149,7 @@ public class AdvertServiceImpl implements AdvertService {
      * @return list of finding adverts of a specific user
      * as ResponseWrapperAdsTo (DTO)
      */
+    @Transactional
     @Override
     public ResponseWrapperAdsTo getAdsMe(String username) {
         User user = userRepository.findUsersByUsername(username).orElseThrow(UserNotFoundException::new);

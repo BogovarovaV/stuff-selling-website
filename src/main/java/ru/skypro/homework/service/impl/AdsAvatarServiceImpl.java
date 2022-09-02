@@ -9,7 +9,6 @@ import ru.skypro.homework.service.AdsAvatarService;
 
 import java.io.IOException;
 import java.util.Optional;
-import java.util.UUID;
 
 
 @Service
