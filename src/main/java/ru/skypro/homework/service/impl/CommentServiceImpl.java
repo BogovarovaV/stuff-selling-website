@@ -1,7 +1,9 @@
 package ru.skypro.homework.service.impl;
 
+import org.springframework.security.core.Authentication;
 import org.springframework.security.core.userdetails.UserDetails;
 import org.springframework.stereotype.Service;
+import org.springframework.transaction.annotation.Transactional;
 import ru.skypro.homework.dto.AdsCommentTo;
 import ru.skypro.homework.dto.ResponseWrapperAdsCommentTo;
 import ru.skypro.homework.exception.AdvertNotFoundException;
@@ -16,7 +18,7 @@ import ru.skypro.homework.repository.AdvertRepository;
 import ru.skypro.homework.repository.CommentRepository;
 import ru.skypro.homework.repository.UserRepository;
 import ru.skypro.homework.service.CommentService;
-
+import java.time.OffsetDateTime;
 import java.util.List;
 
 @Service
@@ -41,10 +43,13 @@ public class CommentServiceImpl implements CommentService {
      * @return created comment as AdsCommentTo (DTO)
      */
     @Override
-    public AdsCommentTo createComment(Integer adsId, AdsCommentTo adsCommentDto) {
+    public AdsCommentTo createComment(Integer adsId, AdsCommentTo adsCommentDto, Authentication authentication) {
         Comment createdComment = commentMapper.adsCommentDtoToCommentEntity(adsCommentDto);
-        createdComment.setUser(userRepository.findById(adsCommentDto.getAuthor()).orElseThrow(UserNotFoundException::new));
-        createdComment.setAds(advertRepository.findById(adsId).orElseThrow(AdvertNotFoundException::new));
+        User user = userRepository.findUsersByUsername(authentication.getName()).orElseThrow(UserNotFoundException::new);
+        createdComment.setUser(user);
+        Advert advert = advertRepository.findById(adsId).orElseThrow(AdvertNotFoundException::new);
+        createdComment.setAds(advert);
+        createdComment.setCreatedAt(OffsetDateTime.now());
         commentRepository.save(createdComment);
         return adsCommentDto;
     }
@@ -56,11 +61,11 @@ public class CommentServiceImpl implements CommentService {
      * @param username username from client
      * @param userDetails - user details from client
      */
+    @Transactional
     @Override
     public void deleteAdsComment(Integer adsId, Integer id, String username, UserDetails userDetails) {
         Comment comment = commentRepository.findCommentById(id).orElseThrow(CommentNotFoundException::new);
-        Advert advert = advertRepository.findById(adsId).orElseThrow(AdvertNotFoundException::new);
-        User user = userRepository.getById(advert.getUser().getId());
+        User user = userRepository.getById(comment.getUser().getId());
         if (userDetails.getAuthorities().toString().contains("ROLE_ADMIN")
                 || username.equals(user.getUsername())) {
             commentRepository.delete(comment);
@@ -75,6 +80,7 @@ public class CommentServiceImpl implements CommentService {
      * @return list of all comments of a specific advert
      * as ResponseWrapperAdsCommentTo (DTO)
      */
+    @Transactional
     @Override
     public ResponseWrapperAdsCommentTo getAdsAllComments(Integer adsId) {
         List<AdsCommentTo> adsCommentList = commentMapper.commentEntitiesToAdsCommentDtos(commentRepository.findAllByAdsIdOrderByIdDesc(adsId));
@@ -90,6 +96,7 @@ public class CommentServiceImpl implements CommentService {
      * @param id - comment ID from client
      * @return found comment as AdsCommentTo (DTO)
      */
+    @Transactional
     @Override
     public AdsCommentTo getAdsComment(Integer adsId, Integer id) {
         Comment comment = commentRepository.findCommentById(id).orElseThrow(CommentNotFoundException::new);
@@ -105,11 +112,11 @@ public class CommentServiceImpl implements CommentService {
      * @param userDetails - user details from client
      * @return updated comment as AdsCommentTo (DTO) or throw exception
      */
+    @Transactional
     @Override
     public AdsCommentTo updateAdsComment(Integer adsId, Integer id, AdsCommentTo adsCommentDto, String username, UserDetails userDetails) {
         Comment comment = commentRepository.findCommentById(id).orElseThrow(CommentNotFoundException::new);
-        Advert advert = advertRepository.findById(adsId).orElseThrow(AdvertNotFoundException::new);
-        User user = userRepository.getById(advert.getUser().getId());
+        User user = userRepository.getById(comment.getUser().getId());
         if (userDetails.getAuthorities().toString().contains("ROLE_ADMIN")
                 || username.equals(user.getUsername())) {
             comment.setCreatedAt(adsCommentDto.getCreatedAt());

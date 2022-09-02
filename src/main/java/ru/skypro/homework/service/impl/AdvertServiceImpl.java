@@ -3,6 +3,7 @@ package ru.skypro.homework.service.impl;
 import org.springframework.security.core.Authentication;
 import org.springframework.security.core.userdetails.UserDetails;
 import org.springframework.stereotype.Service;
+import org.springframework.transaction.annotation.Transactional;
 import org.springframework.web.multipart.MultipartFile;
 import ru.skypro.homework.dto.AdsTo;
 import ru.skypro.homework.dto.CreateAdsTo;
@@ -29,7 +30,6 @@ public class AdvertServiceImpl implements AdvertService {
     private final AdsMapper adsMapper;
     private final AdsAvatarService adsAvatarService;
 
-
     public AdvertServiceImpl(AdvertRepository advertRepository, UserRepository userRepository, AdsMapper adsMapper, AdsAvatarService adsAvatarService) {
         this.advertRepository = advertRepository;
         this.userRepository = userRepository;
@@ -42,6 +42,7 @@ public class AdvertServiceImpl implements AdvertService {
      *
      * @return list as ResponseWrapperAdsTo (DTO)
      */
+    @Transactional
     @Override
     public ResponseWrapperAdsTo getAllAds() {
         System.out.println("Get all ads service called");
@@ -54,11 +55,11 @@ public class AdvertServiceImpl implements AdvertService {
 
     /**
      * Create advert
-     * // * @param createAdsDto - advert from client
-     *
+     * @param createAdsDto      - advert information from client
+     * @param file              - advert avatar from client
+     * @param authentication    - user authentication
      * @return created advert as AdsTo (DTO)
      */
-
     @Override
     public AdsTo createAds(CreateAdsTo createAdsDto, MultipartFile file, Authentication authentication) {
         Advert createdAds = adsMapper.createAdsDtoToAdvertEntity(createAdsDto);
@@ -114,7 +115,7 @@ public class AdvertServiceImpl implements AdvertService {
         // check if user has access to change advert (has role "Admin" or user wants to change his own advert)
         if (userDetails.getAuthorities().toString().contains("ROLE_ADMIN")
                 || username.equals(advert.getUser().getUsername())) {
-            advert.setImage(adsAvatarService.saveAds(file));
+            advert.setImage("/api/" + adsAvatarService.saveAds(file) + "/image");
             advert.setPrice(adsDto.getPrice());
             advert.setTitle(adsDto.getTitle());
             advert.setDescription(adsDto.getDescription());
@@ -147,6 +148,7 @@ public class AdvertServiceImpl implements AdvertService {
      * @return list of finding adverts of a specific user
      * as ResponseWrapperAdsTo (DTO)
      */
+    @Transactional
     @Override
     public ResponseWrapperAdsTo getAdsMe(String username) {
         User user = userRepository.findUsersByUsername(username).orElseThrow(UserNotFoundException::new);

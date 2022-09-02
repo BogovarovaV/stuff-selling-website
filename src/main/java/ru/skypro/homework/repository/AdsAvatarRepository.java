@@ -7,7 +7,7 @@ import ru.skypro.homework.model.AdsAvatar;
 import java.util.Optional;
 
 @Repository
-public interface AdsAvatarRepository extends JpaRepository<AdsAvatar, String> {
+public interface AdsAvatarRepository extends JpaRepository<AdsAvatar, Integer> {
 
-    Optional<AdsAvatar> findById(String id);
+    Optional<AdsAvatar> findById(Integer id);
 }
