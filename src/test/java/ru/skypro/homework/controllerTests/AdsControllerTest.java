@@ -45,7 +45,6 @@ import static org.springframework.test.web.servlet.result.MockMvcResultMatchers.
 import static ru.skypro.homework.DataTest.*;
 import static org.mockito.Mockito.*;
 
-
 @WebMvcTest(controllers = AdsController.class)
 public class AdsControllerTest {
 

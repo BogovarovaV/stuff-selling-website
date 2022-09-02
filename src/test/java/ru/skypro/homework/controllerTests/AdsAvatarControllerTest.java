@@ -27,6 +27,7 @@ import static org.springframework.test.web.servlet.result.MockMvcResultMatchers.
 import static ru.skypro.homework.DataTest.ADS_AVATAR_ID;
 import static ru.skypro.homework.DataTest.ADS_AVATAR_IMAGE;
 
+
 @WebMvcTest(controllers = AdsAvatarController.class)
 public class AdsAvatarControllerTest {
 

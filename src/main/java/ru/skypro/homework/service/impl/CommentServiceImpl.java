@@ -18,7 +18,6 @@ import ru.skypro.homework.repository.AdvertRepository;
 import ru.skypro.homework.repository.CommentRepository;
 import ru.skypro.homework.repository.UserRepository;
 import ru.skypro.homework.service.CommentService;
-
 import java.time.OffsetDateTime;
 import java.util.List;
 
