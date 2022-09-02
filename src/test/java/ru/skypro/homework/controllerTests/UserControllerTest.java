@@ -17,11 +17,12 @@ import org.springframework.test.web.servlet.setup.MockMvcBuilders;
 import org.springframework.web.context.WebApplicationContext;
 import ru.skypro.homework.controller.UserController;
 import ru.skypro.homework.dto.UserTo;
-
 import ru.skypro.homework.mapper.UserMapper;
 import ru.skypro.homework.model.User;
 import ru.skypro.homework.repository.UserRepository;
-import ru.skypro.homework.service.*;
+import ru.skypro.homework.service.AdsAvatarService;
+import ru.skypro.homework.service.AdvertService;
+import ru.skypro.homework.service.CommentService;
 import ru.skypro.homework.service.impl.AuthServiceImpl;
 import ru.skypro.homework.service.impl.UserServiceImpl;
 
