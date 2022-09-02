@@ -233,7 +233,6 @@ public class AdsControllerTest {
 
     @WithMockUser(username = USERNAME, authorities = "USER")
     @Test
-
     public void testShouldCreateAds() throws Exception {
         when(auth.getName()).thenReturn(USERNAME);
         when(adsMapper.createAdsDtoToAdvertEntity(any())).thenReturn(advert);
@@ -249,35 +248,33 @@ public class AdsControllerTest {
     }
 
 
-//    @Test
-//    public void testShouldThrowException_whenUnauthorizedUserTryingToCreateAds() throws Exception {
-//        when(adsMapper.createAdsDtoToAdvertEntity(any())).thenReturn(advert);
-//        when(auth.getName()).thenReturn(null);
-//        when(userRepository.findUsersByUsername(any())).thenReturn(Optional.ofNullable(user));
-//        when(adsMapper.advertEntityToAdsDto(any())).thenReturn(adsTo);
-//
-//        mockMvc.perform(MockMvcRequestBuilders
-//                        .multipart("/ads")
-//                        .file(adsJson)
-//                        .file(image))
-//
-//                .andExpect(status().isForbidden());
-//    }
+    @Test
+    public void testShouldThrowException_whenUnauthorizedUserTryingToCreateAds() throws Exception {
+        when(adsMapper.createAdsDtoToAdvertEntity(any())).thenReturn(advert);
+        when(auth.getName()).thenReturn(null);
+        when(userRepository.findUsersByUsername(any())).thenReturn(Optional.ofNullable(user));
+        when(adsMapper.advertEntityToAdsDto(any())).thenReturn(adsTo);
+        mockMvc.perform(MockMvcRequestBuilders
+                        .multipart("/ads")
+                        .file(adsJson)
+                        .file(image))
+                .andExpect(status().isForbidden());
+    }
 
 
-//    @WithMockUser(username = USERNAME, password = PASSWORD, authorities = "USER")
-//    @Test
-//    public void testShouldGetAdsMe() throws Exception {
-//        when(auth.getName()).thenReturn(EMAIL);
-//        when(userRepository.findUsersByUsername(any())).thenReturn(Optional.ofNullable(user));
-//        when(adsMapper.advertEntitiesToAdsDtos(any())).thenReturn(adsToList);
-//
-//        mockMvc.perform(MockMvcRequestBuilders
-//                        .get("/ads/me")
-//                )
-//                .andExpect(status().isOk());
-//
-//    }
+    @WithMockUser(username = "uu@gmail.com", authorities = "USER")
+    @Test
+    public void testShouldGetAdsMe() throws Exception {
+        when(auth.getName()).thenReturn("uu@gmail.com");
+        when(userRepository.findUsersByUsername(any())).thenReturn(Optional.ofNullable(user));
+        when(adsMapper.advertEntitiesToAdsDtos(any())).thenReturn(adsToList);
+
+        mockMvc.perform(MockMvcRequestBuilders
+                        .get("/ads/me")
+                )
+                .andExpect(status().isOk());
+
+    }
 
     @WithMockUser(username = "user", authorities = "USER")
     @Test
