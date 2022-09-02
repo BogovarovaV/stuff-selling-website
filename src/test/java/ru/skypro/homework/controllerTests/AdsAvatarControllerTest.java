@@ -59,7 +59,9 @@ public class AdsAvatarControllerTest {
                 "image",
                 "image.png",
                 MediaType.IMAGE_PNG_VALUE, ADS_AVATAR_IMAGE);
+
         when(adsAvatarRepository.saveAndFlush(any())).thenReturn(adsAvatar);
+
         mockMvc.perform(multipart("/upl").file(image))
                 .andExpect(status().isOk());
     }
@@ -68,8 +70,7 @@ public class AdsAvatarControllerTest {
     public void testShouldGetImage() throws Exception {
         when(adsAvatarRepository.findById(any())).thenReturn(Optional.ofNullable(adsAvatar));
         mockMvc.perform(MockMvcRequestBuilders
-                        .get("/api/1/image")
-                )
-                .andExpect(status().isOk());
+                        .get("/api/1/image"))
+                        .andExpect(status().isOk());
     }
 }

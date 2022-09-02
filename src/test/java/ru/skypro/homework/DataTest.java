@@ -9,7 +9,6 @@ public interface DataTest {
     String FIRSTNAME = "USER";
     String LASTNAME = "USEROV";
     String EMAIL = "uu@gmail.com";
-    String EMAIL_2 = "us@gmail.com";
     String PHONE = "+79175678901";
     String PHONE_2 = "+79175678905";
     String USERNAME = EMAIL;
@@ -22,9 +21,7 @@ public interface DataTest {
     String DESC = "description";
     Integer COUNT = 1;
     Integer COMMENT_ID = 1;
-    Integer COMMENT_ID_2 = 2;
     OffsetDateTime DATE_TIME = OffsetDateTime.now();
-    OffsetDateTime DATE_TIME_2 = OffsetDateTime.MAX;
     String TEXT_1 = "texttext";
     String TEXT_2 = "updated_text";
     Integer ADS_AVATAR_ID = 1;
