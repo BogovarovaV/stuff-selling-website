@@ -6,6 +6,6 @@ public interface AdsAvatarService {
 
     Integer saveAds(MultipartFile file);
 
-    byte [] getAdsAvatar(String id);
+    byte [] getAdsAvatar(Integer id);
 
 }

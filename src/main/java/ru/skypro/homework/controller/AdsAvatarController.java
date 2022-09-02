@@ -32,7 +32,7 @@ public class AdsAvatarController {
             summary = "Получение изображения объявления по id (getAdsAvatar)"
     )
     @GetMapping(value = "/api/{id}/image", produces = {MediaType.IMAGE_PNG_VALUE})
-    public ResponseEntity<byte[]> getAdsAvatar(@PathVariable("id") String id) {
+    public ResponseEntity<byte[]> getAdsAvatar(@PathVariable("id") Integer id) {
         return ResponseEntity.ok().body(adsAvatarService.getAdsAvatar(id));
     }
 }

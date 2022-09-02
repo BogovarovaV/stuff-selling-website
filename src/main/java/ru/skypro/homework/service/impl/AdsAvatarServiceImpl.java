@@ -45,7 +45,7 @@ public class AdsAvatarServiceImpl implements AdsAvatarService {
      * @return advert avatar as byte array
      */
     @Override
-    public byte[] getAdsAvatar(String id) {
+    public byte[] getAdsAvatar(Integer id) {
         Optional<AdsAvatar> adsAvatar = adsAvatarRepository.findById(id);
         byte[] image = null;
         if (adsAvatarRepository.findById(id).isPresent()) {
