@@ -2,6 +2,7 @@ package ru.skypro.homework.service.impl;
 
 import org.springframework.security.core.userdetails.UserDetails;
 import org.springframework.stereotype.Service;
+import org.springframework.transaction.annotation.Transactional;
 import ru.skypro.homework.dto.AdsCommentTo;
 import ru.skypro.homework.dto.ResponseWrapperAdsCommentTo;
 import ru.skypro.homework.exception.AdvertNotFoundException;
@@ -75,6 +76,7 @@ public class CommentServiceImpl implements CommentService {
      * @return list of all comments of a specific advert
      * as ResponseWrapperAdsCommentTo (DTO)
      */
+    @Transactional
     @Override
     public ResponseWrapperAdsCommentTo getAdsAllComments(Integer adsId) {
         List<AdsCommentTo> adsCommentList = commentMapper.commentEntitiesToAdsCommentDtos(commentRepository.findAllByAdsIdOrderByIdDesc(adsId));
@@ -90,6 +92,7 @@ public class CommentServiceImpl implements CommentService {
      * @param id - comment ID from client
      * @return found comment as AdsCommentTo (DTO)
      */
+    @Transactional
     @Override
     public AdsCommentTo getAdsComment(Integer adsId, Integer id) {
         Comment comment = commentRepository.findCommentById(id).orElseThrow(CommentNotFoundException::new);
@@ -105,6 +108,7 @@ public class CommentServiceImpl implements CommentService {
      * @param userDetails - user details from client
      * @return updated comment as AdsCommentTo (DTO) or throw exception
      */
+    @Transactional
     @Override
     public AdsCommentTo updateAdsComment(Integer adsId, Integer id, AdsCommentTo adsCommentDto, String username, UserDetails userDetails) {
         Comment comment = commentRepository.findCommentById(id).orElseThrow(CommentNotFoundException::new);

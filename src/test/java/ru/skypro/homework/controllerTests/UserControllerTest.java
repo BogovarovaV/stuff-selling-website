@@ -17,6 +17,7 @@ import org.springframework.test.web.servlet.setup.MockMvcBuilders;
 import org.springframework.web.context.WebApplicationContext;
 import ru.skypro.homework.controller.UserController;
 import ru.skypro.homework.dto.UserTo;
+
 import ru.skypro.homework.mapper.UserMapper;
 import ru.skypro.homework.model.User;
 import ru.skypro.homework.repository.UserRepository;
@@ -91,6 +92,7 @@ class UserControllerTest {
         userTo.setId(USER_ID);
         userTo.setFirstName(FIRSTNAME);
         userTo.setLastName(LASTNAME);
+
         userTo.setEmail(EMAIL);
         userTo.setPhone(PHONE);
 
@@ -118,6 +120,7 @@ class UserControllerTest {
                 .andExpect(jsonPath("$.firstName").value(FIRSTNAME))
                 .andExpect(jsonPath("$.lastName").value(LASTNAME))
                 .andExpect(jsonPath("$.email").value(EMAIL))
+
                 .andExpect(jsonPath("$.phone").value(PHONE));
     }
 
@@ -127,6 +130,7 @@ class UserControllerTest {
         when(auth.getName()).thenReturn(USERNAME);
         when(userRepository.findById(any())).thenReturn(Optional.of(user));
         user.setPhone(PHONE_2);
+
 
         mockMvc.perform(MockMvcRequestBuilders
                         .patch("/users/me")

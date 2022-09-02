@@ -37,7 +37,7 @@ public class UserController {
             tags = "Пользователи (UserController)",
             summary = "Получение пользователей (getUsers)"
     )
-    @PreAuthorize("hasAnyRole('ROLE_ADMIN','ROLE_USER')")
+    @PreAuthorize("hasAnyAuthority('ROLE_ADMIN','ROLE_USER')")
     @GetMapping("/me")
     public ResponseEntity<User> getCurrentUser() {
         Authentication authentication = SecurityContextHolder.getContext().getAuthentication();
@@ -49,7 +49,7 @@ public class UserController {
             tags = "Пользователи (UserController)",
             summary = "Редактирование пользователя (updateUser)"
     )
-    @PreAuthorize("hasAnyRole('ROLE_ADMIN','ROLE_USER')")
+    @PreAuthorize("hasAnyAuthority('ROLE_ADMIN','ROLE_USER')")
     @PatchMapping("/me")
     public ResponseEntity<UserTo> updateUser(@Valid @RequestBody UserTo userTo) {
         Authentication authentication = SecurityContextHolder.getContext().getAuthentication();
@@ -60,7 +60,7 @@ public class UserController {
             tags = "Пользователи (UserController)",
             summary = "Изменение пароля (setPassword)"
     )
-    @PreAuthorize("hasAnyRole('ROLE_ADMIN','ROLE_USER')")
+    @PreAuthorize("hasAnyAuthority('ROLE_ADMIN','ROLE_USER')")
     @PostMapping("/set_password")
     public ResponseEntity<NewPasswordTo> setPassword(@Valid @RequestBody NewPasswordTo newPasswordTo) {
         Authentication authentication = SecurityContextHolder.getContext().getAuthentication();
@@ -76,7 +76,7 @@ public class UserController {
             tags = "Пользователи (UserController)",
             summary = "Получение пользователя по id (getUser)"
     )
-    @PreAuthorize("hasRole('ROLE_ADMIN')")
+    @PreAuthorize("hasAnyAuthority('ROLE_ADMIN')")
     @GetMapping("/{id}")
     public ResponseEntity<UserTo> getAnyUser(@Positive @PathVariable("id") int id) {
         return ResponseEntity.ok(userService.getUser(id));
@@ -86,7 +86,7 @@ public class UserController {
             tags = "Пользователи (UserController)",
             summary = "Получение всех пользователей с сортировкой по id (getAllUsersWithOrderById)"
     )
-    @PreAuthorize("hasRole('ROLE_ADMIN')")
+    @PreAuthorize("hasAuthority('ROLE_ADMIN')")
     @GetMapping
     public ResponseEntity<ResponseWrapperUserTo> getAllUsersWithOrderById() {
         return ResponseEntity.ok(userService.getAllUsersWithOrderById());

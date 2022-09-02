@@ -14,25 +14,20 @@ public interface DataTest {
     String PHONE_2 = "+79175678905";
     String USERNAME = EMAIL;
     String PASSWORD = "12345678";
-
     Integer ADS_ID = 1;
     Integer PRICE = 20000;
     Integer PRICE_2 = 15000;
     String TITLE = "title";
     String IMAGE = "/api/1/image";
     String DESC = "description";
-
     Integer COUNT = 1;
-
     Integer COMMENT_ID = 1;
     Integer COMMENT_ID_2 = 2;
     OffsetDateTime DATE_TIME = OffsetDateTime.now();
     OffsetDateTime DATE_TIME_2 = OffsetDateTime.MAX;
     String TEXT_1 = "texttext";
     String TEXT_2 = "updated_text";
-
-    String ADS_AVATAR_ID = "1";
+    Integer ADS_AVATAR_ID = 1;
     byte[] ADS_AVATAR_IMAGE = "f6d73k9r".getBytes(StandardCharsets.UTF_8);
-
-
 }
+
