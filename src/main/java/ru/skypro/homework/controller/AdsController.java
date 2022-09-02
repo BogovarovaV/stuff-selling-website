@@ -62,7 +62,8 @@ public class AdsController {
     )
     @GetMapping("/me")
     @PreAuthorize("hasAnyAuthority('ROLE_ADMIN','ROLE_USER')")
-    public ResponseEntity<ResponseWrapperAdsTo> getAdsMe(Authentication authentication) {
+    public ResponseEntity<ResponseWrapperAdsTo> getAdsMe() {
+        Authentication authentication = SecurityContextHolder.getContext().getAuthentication();
         return ResponseEntity.ok(advertService.getAdsMe(authentication.getName()));
     }
 
@@ -133,8 +134,8 @@ public class AdsController {
     @PreAuthorize("hasAnyAuthority('ROLE_ADMIN','ROLE_USER')")
     @PostMapping("{ad_pk}/comments")
     public ResponseEntity<AdsCommentTo> addAdsComment(@Positive @PathVariable int ad_pk, @Valid @RequestBody AdsCommentTo adsCommentTo) {
-        System.out.println("Ads comment " + adsCommentTo.toString() + "ad " + ad_pk);
-        return ResponseEntity.ok(commentService.createComment(ad_pk, adsCommentTo));
+        Authentication authentication = SecurityContextHolder.getContext().getAuthentication();
+        return ResponseEntity.ok(commentService.createComment(ad_pk, adsCommentTo, authentication));
     }
 
 
