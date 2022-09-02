@@ -1,5 +1,6 @@
 package ru.skypro.homework.service.impl;
 
+import org.springframework.security.core.Authentication;
 import org.springframework.security.core.userdetails.UserDetails;
 import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
@@ -18,6 +19,7 @@ import ru.skypro.homework.repository.CommentRepository;
 import ru.skypro.homework.repository.UserRepository;
 import ru.skypro.homework.service.CommentService;
 
+import java.time.OffsetDateTime;
 import java.util.List;
 
 @Service
@@ -42,13 +44,13 @@ public class CommentServiceImpl implements CommentService {
      * @return created comment as AdsCommentTo (DTO)
      */
     @Override
-    public AdsCommentTo createComment(Integer adsId, AdsCommentTo adsCommentDto) {
+    public AdsCommentTo createComment(Integer adsId, AdsCommentTo adsCommentDto, Authentication authentication) {
         Comment createdComment = commentMapper.adsCommentDtoToCommentEntity(adsCommentDto);
-        User user = userRepository.findById(adsCommentDto.getAuthor()).orElseThrow(UserNotFoundException::new);
+        User user = userRepository.findUsersByUsername(authentication.getName()).orElseThrow(UserNotFoundException::new);
         createdComment.setUser(user);
         Advert advert = advertRepository.findById(adsId).orElseThrow(AdvertNotFoundException::new);
         createdComment.setAds(advert);
-        System.out.println("Comment's user " + user.toString() + "Advert " + advert.toString());
+        createdComment.setCreatedAt(OffsetDateTime.now());
         commentRepository.save(createdComment);
         return adsCommentDto;
     }
