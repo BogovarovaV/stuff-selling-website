@@ -49,7 +49,6 @@ public class AdsAvatarControllerTest {
 
     @BeforeEach
     public void setUp() {
-
         mockMvc = MockMvcBuilders.webAppContextSetup(webApplicationContext).build();
         adsAvatar = new AdsAvatar(ADS_AVATAR_ID, ADS_AVATAR_IMAGE);
     }
@@ -60,11 +59,11 @@ public class AdsAvatarControllerTest {
                 "image",
                 "image.png",
                 MediaType.IMAGE_PNG_VALUE, ADS_AVATAR_IMAGE);
-
         when(adsAvatarRepository.saveAndFlush(any())).thenReturn(adsAvatar);
 
-        mockMvc.perform(multipart("/upl").file(image))
-                .andExpect(status().isOk());
+        mockMvc.perform(multipart("/upl")
+                        .file(image))
+                        .andExpect(status().isOk());
     }
 
     @Test

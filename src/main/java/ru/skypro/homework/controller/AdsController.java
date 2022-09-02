@@ -36,7 +36,6 @@ public class AdsController {
             tags = "Объявления (AdsController)",
             summary = "Получение списка всех объявлений (getAllAds)"
     )
-
     @GetMapping
     public ResponseEntity<ResponseWrapperAdsTo> getAllAds() {
         return ResponseEntity.ok(advertService.getAllAds());

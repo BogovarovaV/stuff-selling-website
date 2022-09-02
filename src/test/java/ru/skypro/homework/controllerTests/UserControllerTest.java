@@ -50,25 +50,19 @@ class UserControllerTest {
 
     @MockBean
     private UserRepository userRepository;
-
     @MockBean
     private UserMapper userMapper;
-
     @MockBean
     private Authentication auth;
-
     @MockBean
     private AdsAvatarService adsAvatarService;
-
     @MockBean
     private AdvertService advertService;
-
     @MockBean
     private CommentService commentService;
 
     @SpyBean
     private UserServiceImpl userService;
-
     @SpyBean
     private AuthServiceImpl authService;
 
@@ -94,7 +88,6 @@ class UserControllerTest {
         userTo.setId(USER_ID);
         userTo.setFirstName(FIRSTNAME);
         userTo.setLastName(LASTNAME);
-
         userTo.setEmail(EMAIL);
         userTo.setPhone(PHONE);
 
@@ -109,28 +102,28 @@ class UserControllerTest {
 
     @WithMockUser(username="admin", authorities = "ADMIN")
     @Test
-    void shouldGetCurrentUserByUsername() throws Exception {
+    void testShouldGetCurrentUserByUsername() throws Exception {
         when(userRepository.findUsersByUsername(any())).thenReturn(Optional.ofNullable(user));
         when(auth.getName()).thenReturn(USERNAME);
 
         mockMvc.perform(MockMvcRequestBuilders
-                        .get("/users/me")
-                )
-                .andExpect(status().isOk())
-                .andExpect(jsonPath("$.id").value(USER_ID))
-                .andExpect(jsonPath("$.username").value(USERNAME))
-                .andExpect(jsonPath("$.firstName").value(FIRSTNAME))
-                .andExpect(jsonPath("$.lastName").value(LASTNAME))
-                .andExpect(jsonPath("$.email").value(EMAIL))
-                .andExpect(jsonPath("$.phone").value(PHONE));
+                        .get("/users/me"))
+                        .andExpect(status().isOk())
+                        .andExpect(jsonPath("$.id").value(USER_ID))
+                        .andExpect(jsonPath("$.username").value(USERNAME))
+                        .andExpect(jsonPath("$.firstName").value(FIRSTNAME))
+                        .andExpect(jsonPath("$.lastName").value(LASTNAME))
+                        .andExpect(jsonPath("$.email").value(EMAIL))
+                        .andExpect(jsonPath("$.phone").value(PHONE));
     }
 
     @WithMockUser(username=USERNAME, authorities = "USER")
     @Test
-    void shouldUpdateUser() throws Exception {
+    void testShouldUpdateUser() throws Exception {
         when(auth.getName()).thenReturn(USERNAME);
         when(userRepository.findUsersByUsername(any())).thenReturn(Optional.of(user));
         user.setPhone(PHONE_2);
+
         mockMvc.perform(MockMvcRequestBuilders
                         .patch("/users/me")
                         .content(userObject.toString())
@@ -146,7 +139,7 @@ class UserControllerTest {
 
     @WithMockUser(username="admin", authorities = "ADMIN")
     @Test
-    void shouldGetAnyUserById() throws Exception {
+    void testShouldGetAnyUserById() throws Exception {
         when(userRepository.findById(any())).thenReturn(Optional.ofNullable(user));
         when(userMapper.usersEntityToUserDto(any())).thenReturn(userTo);
 
@@ -162,7 +155,7 @@ class UserControllerTest {
 
     @WithMockUser(username="admin", authorities = "ADMIN")
     @Test
-    void shouldGetAllUsersWithOrderById() throws Exception {
+    void testShouldGetAllUsersWithOrderById() throws Exception {
         when(userMapper.usersEntitiesToUserDtos(any())).thenReturn(List.of(userTo));
 
         mockMvc.perform(MockMvcRequestBuilders
