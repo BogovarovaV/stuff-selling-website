@@ -129,10 +129,8 @@ class UserControllerTest {
     @Test
     void shouldUpdateUser() throws Exception {
         when(auth.getName()).thenReturn(USERNAME);
-        when(userRepository.findById(any())).thenReturn(Optional.of(user));
+        when(userRepository.findUsersByUsername(any())).thenReturn(Optional.of(user));
         user.setPhone(PHONE_2);
-
-
         mockMvc.perform(MockMvcRequestBuilders
                         .patch("/users/me")
                         .content(userObject.toString())

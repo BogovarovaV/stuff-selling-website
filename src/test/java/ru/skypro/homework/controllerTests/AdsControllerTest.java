@@ -11,6 +11,7 @@ import org.springframework.boot.test.mock.mockito.SpyBean;
 import org.springframework.http.MediaType;
 import org.springframework.mock.web.MockMultipartFile;
 import org.springframework.security.core.Authentication;
+import org.springframework.security.test.context.support.WithAnonymousUser;
 import org.springframework.security.test.context.support.WithMockUser;
 import org.springframework.test.web.servlet.MockMvc;
 import org.springframework.test.web.servlet.request.MockMvcRequestBuilders;
@@ -211,7 +212,6 @@ public class AdsControllerTest {
 
     }
 
-
     @WithMockUser(username = "admin", authorities = "ADMIN")
     @Test
     public void testShouldGetAllAds() throws Exception {
@@ -228,7 +228,6 @@ public class AdsControllerTest {
                 .andExpect(jsonPath("$.results[*].price").value(PRICE))
                 .andExpect(jsonPath("$.results[*].title").value(TITLE))
                 .andExpect(jsonPath("$.results[*].description").value(DESC));
-
     }
 
     @WithMockUser(username = USERNAME, authorities = "USER")
@@ -247,28 +246,12 @@ public class AdsControllerTest {
                 .andExpect(status().isOk());
     }
 
-
-    @Test
-    public void testShouldThrowException_whenUnauthorizedUserTryingToCreateAds() throws Exception {
-        when(adsMapper.createAdsDtoToAdvertEntity(any())).thenReturn(advert);
-        when(auth.getName()).thenReturn(null);
-        when(userRepository.findUsersByUsername(any())).thenReturn(Optional.ofNullable(user));
-        when(adsMapper.advertEntityToAdsDto(any())).thenReturn(adsTo);
-        mockMvc.perform(MockMvcRequestBuilders
-                        .multipart("/ads")
-                        .file(adsJson)
-                        .file(image))
-                .andExpect(status().isForbidden());
-    }
-
-
-    @WithMockUser(username = "uu@gmail.com", authorities = "USER")
+    @WithMockUser(username = USERNAME, authorities = "USER")
     @Test
     public void testShouldGetAdsMe() throws Exception {
-        when(auth.getName()).thenReturn("uu@gmail.com");
+        when(auth.getName()).thenReturn(USERNAME);
         when(userRepository.findUsersByUsername(any())).thenReturn(Optional.ofNullable(user));
         when(adsMapper.advertEntitiesToAdsDtos(any())).thenReturn(adsToList);
-
         mockMvc.perform(MockMvcRequestBuilders
                         .get("/ads/me")
                 )
@@ -363,18 +346,15 @@ public class AdsControllerTest {
     }
 
     @WithMockUser(username = USERNAME, password = PASSWORD, authorities = "USER")
-
     @Test
     public void testShouldAddAdsComments() throws Exception {
         when(auth.getName()).thenReturn(USERNAME);
         when(commentMapper.adsCommentDtoToCommentEntity(any())).thenReturn(comment);
-        when(userRepository.findById(any())).thenReturn(Optional.ofNullable(user));
+        when(userRepository.findUsersByUsername(any())).thenReturn(Optional.ofNullable(user));
         when(advertRepository.findById(any())).thenReturn(Optional.ofNullable(advert));
-
 
         mockMvc.perform(MockMvcRequestBuilders
                         .post("/ads/" + ADS_ID + "/comments")
-
                         .content(commentObject.toString())
                         .contentType(MediaType.APPLICATION_JSON)
                         .accept(MediaType.APPLICATION_JSON)
@@ -396,7 +376,19 @@ public class AdsControllerTest {
                         .delete("/ads/" + ADS_ID + "/comments/" + COMMENT_ID)
                 )
                 .andExpect(status().isOk());
+    }
 
+    @WithMockUser(username = "stranger@mail.ru", authorities = "USER")
+    @Test
+    public void testShouldThrowException_whenUserTryingToDeleteAlienAdsCommentsById() throws Exception {
+        when(commentRepository.findCommentById(any())).thenReturn(Optional.ofNullable(comment));
+        when(advertRepository.findById(any())).thenReturn(Optional.ofNullable(advert));
+        when(userRepository.getById(any())).thenReturn(user);
+        when(auth.getName()).thenReturn("stranger@mail.ru");
+        mockMvc.perform(MockMvcRequestBuilders
+                        .delete("/ads/1/comments/1")
+                )
+                .andExpect(status().isForbidden());
     }
 
     @WithMockUser(username = "user", authorities = "USER")
@@ -404,7 +396,6 @@ public class AdsControllerTest {
     public void testShouldGetAdsCommentsById() throws Exception {
         when(commentRepository.findCommentById(any())).thenReturn(Optional.of(comment));
         when(commentMapper.commentEntityToAdsCommentDto(any())).thenReturn(commentTo);
-
 
         mockMvc.perform(MockMvcRequestBuilders
                         .get("/ads/" + ADS_ID + "/comments/" + COMMENT_ID)
@@ -434,9 +425,26 @@ public class AdsControllerTest {
                 )
                 .andExpect(status().isOk())
                 .andExpect(jsonPath("$.author").value(USER_ID))
-
                 .andExpect(jsonPath("$.pk").value(COMMENT_ID))
                 .andExpect(jsonPath("$.text").value(TEXT_2));
     }
+
+    @WithMockUser(username = "stranger@mail.ru", authorities = "USER")
+    @Test
+    public void testShouldThrowException_whenUserTryingToUpdateAlienAdsCommentsById() throws Exception {
+        comment.setText(TEXT_2);
+        when(commentRepository.findCommentById(any())).thenReturn(Optional.ofNullable(comment));
+        when(advertRepository.findById(any())).thenReturn(Optional.ofNullable(advert));
+        when(userRepository.getById(any())).thenReturn(user);
+        when(auth.getName()).thenReturn("stranger@mail.ru");
+        mockMvc.perform(MockMvcRequestBuilders
+                        .patch("/ads/1/comments/1")
+                        .content(commentObject.toString())
+                        .contentType(MediaType.APPLICATION_JSON)
+                        .accept(MediaType.APPLICATION_JSON)
+                )
+                .andExpect(status().isForbidden());
+    }
+
 
 }
