@@ -6,8 +6,7 @@ import javax.validation.constraints.*;
 
 @Data
 public class UserTo {
-    @Positive
-    @NotNull
+
     private int id;
 
     @Size(min = 3)

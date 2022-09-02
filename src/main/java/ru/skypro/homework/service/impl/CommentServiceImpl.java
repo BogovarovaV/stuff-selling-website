@@ -10,6 +10,7 @@ import ru.skypro.homework.exception.CommentNotFoundException;
 import ru.skypro.homework.exception.NoAccessException;
 import ru.skypro.homework.exception.UserNotFoundException;
 import ru.skypro.homework.mapper.CommentMapper;
+import ru.skypro.homework.model.Advert;
 import ru.skypro.homework.model.Comment;
 import ru.skypro.homework.model.User;
 import ru.skypro.homework.repository.AdvertRepository;
@@ -43,8 +44,11 @@ public class CommentServiceImpl implements CommentService {
     @Override
     public AdsCommentTo createComment(Integer adsId, AdsCommentTo adsCommentDto) {
         Comment createdComment = commentMapper.adsCommentDtoToCommentEntity(adsCommentDto);
-        createdComment.setUser(userRepository.findById(adsCommentDto.getAuthor()).orElseThrow(UserNotFoundException::new));
-        createdComment.setAds(advertRepository.findById(adsId).orElseThrow(AdvertNotFoundException::new));
+        User user = userRepository.findById(adsCommentDto.getAuthor()).orElseThrow(UserNotFoundException::new);
+        createdComment.setUser(user);
+        Advert advert = advertRepository.findById(adsId).orElseThrow(AdvertNotFoundException::new);
+        createdComment.setAds(advert);
+        System.out.println("Comment's user " + user.toString() + "Advert " + advert.toString());
         commentRepository.save(createdComment);
         return adsCommentDto;
     }

@@ -54,13 +54,14 @@ public class UserServiceImpl implements UserService {
     public UserTo updateUser(UserTo userDto, Authentication authentication) {
         String currentUsername = authentication.getName();
         UserDetails currentUserDetails = (UserDetails) authentication.getPrincipal();
-        User user = userRepository.findById(userDto.getId()).orElseThrow(UserNotFoundException::new);
+        User user = userRepository.findUsersByUsername(currentUsername).orElseThrow(UserNotFoundException::new);
         // check if user has access to change data (has role "Admin" or user wants to change his own data)
         if (currentUserDetails.getAuthorities().toString().contains("ROLE_ADMIN")
                 || currentUsername.equals(user.getUsername())) {
             user.setFirstName(userDto.getFirstName());
             user.setLastName(userDto.getLastName());
             user.setPhone(userDto.getPhone());
+            user.setEmail(user.getEmail());
             userRepository.save(user);
             logger.info("User {} has been updated", user.getUsername());
         } else {

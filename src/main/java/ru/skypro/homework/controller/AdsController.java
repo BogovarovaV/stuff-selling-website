@@ -52,7 +52,6 @@ public class AdsController {
     public ResponseEntity<AdsTo> createAds(@RequestPart("properties") @Valid CreateAdsTo ads,
                                            @RequestPart("image") @Valid @NotNull MultipartFile file) {
         Authentication authentication = SecurityContextHolder.getContext().getAuthentication();
-        System.out.println("User role" + authentication.getAuthorities().toString());
         return ResponseEntity.ok(advertService.createAds(ads, file, authentication));
     }
 
@@ -134,6 +133,7 @@ public class AdsController {
     @PreAuthorize("hasAnyAuthority('ROLE_ADMIN','ROLE_USER')")
     @PostMapping("{ad_pk}/comments")
     public ResponseEntity<AdsCommentTo> addAdsComment(@Positive @PathVariable int ad_pk, @Valid @RequestBody AdsCommentTo adsCommentTo) {
+        System.out.println("Ads comment " + adsCommentTo.toString() + "ad " + ad_pk);
         return ResponseEntity.ok(commentService.createComment(ad_pk, adsCommentTo));
     }
 
